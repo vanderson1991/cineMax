@@ -104,7 +104,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.82</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.84</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -145,7 +145,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.82</div>
+    <div id="versionTag">v2.84</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -203,7 +203,7 @@
    Quando preenchida, o app avisa sozinho quando houver versÃ£o nova.
    Manter vazio = modo offline (sÃ³ dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.82';
+var APP_VERSION='2.84';
 
 /* ============ ESCALA AUTOMÃTICA (qualquer resoluÃ§Ã£o da TV) ============ */
 var stage=document.getElementById('stage');
@@ -229,7 +229,7 @@ var CAPAS=[
 "cdc04c6e-43d4-4d9a-a6c6-d44d2f1c3a71_m.jpg","d536dc70-5e53-46d0-82ce-31a314f542c3_m.jpg",
 "dc268dae-c072-4b55-bb81-008695dcc92b_m.jpg","f0a586e0-2132-4f2f-9f23-eb690598db57_m.jpg",
 "f165fd1e-86a8-42e5-b43e-6d1a10f8506d_m.jpg","febf8229-6e35-482e-98b0-d37f83ba87e9_m.jpg",
-"ff7f6ff8-698a-40a9-8e87-572d31339d1e_m.jpg"];
+"ff7f6ff8-698a-40a9-8e87-572d31339d1e_m.jpg","cacador-de-bruxas.jpg"];
 function img(i){return 'capas/'+CAPAS[i%CAPAS.length];}
 
 /* Ã­cones de perfil (recortados dos mosaicos enviados) */
@@ -258,7 +258,8 @@ var catalog=[
 {id:19,t:"As Aventuras de Robinson CrusoÃ©",cat:"Filmes",img:img(19),meta:"AnimaÃ§Ã£o Â· Livre",desc:"A clÃ¡ssica aventura em uma ilha."},
 {id:20,t:"Big Pai, Big Filho",cat:"Filmes",img:img(20),meta:"AnimaÃ§Ã£o Â· Livre",desc:"Um garoto e seu pai gigante."},
 {id:21,t:"NÃ£o Abra!",cat:"Filmes",img:img(21),meta:"Terror Â· 16+",desc:"O que estÃ¡ dentro precisa sair."},
-{id:22,t:"Floresta Maldita",cat:"Filmes",img:img(22),meta:"Terror Â· 16+",desc:"NÃ£o entre na floresta."}];
+{id:22,t:"Floresta Maldita",cat:"Filmes",img:img(22),meta:"Terror Â· 16+",desc:"NÃ£o entre na floresta."},
+{id:23,t:"O Ãšltimo CaÃ§ador de Bruxas",cat:"Filmes",img:img(23),meta:"AÃ§Ã£o Â· Suspense Â· 12+",desc:"Recap completo do filme: o caÃ§ador de bruxas preso Ã  imortalidade enfrenta um novo mal."}];
 
 /* ============ LINKS DOS FILMES ============
    Cole aqui a URL de cada filme (YouTube, mp4 direto ou hls).
@@ -268,12 +269,12 @@ var LINKS={
 5:"",6:"",7:"",8:"",9:"",
 10:"",11:"",12:"",13:"",14:"",
 15:"",16:"",17:"",18:"",19:"",
-20:"",21:"",22:""
+20:"",21:"",22:"",23:"https://www.youtube.com/watch?v=iS_omzHx4gg"
 };
 
 var rowsDef=[
 {title:"Continua assistindo",items:[0,1,2,3,4,5,6]},
-{title:"Filmes em destaque",items:[11,12,13,14,16,18,19,22]},
+{title:"Filmes em destaque",items:[11,12,13,14,16,18,19,22,23]},
 {title:"Terror & Suspense",items:[3,5,6,8,11,14,15,16,21,22]},
 {title:"AÃ§Ã£o",items:[1,2,7,9,12,13,18,20]},
 {title:"AnimaÃ§Ã£o & FamÃ­lia",items:[10,17,19,20]}];;
