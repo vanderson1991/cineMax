@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CineMax TV</title>
+<title>CineCLT</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   :root{--orange:#8b5cf6;--orange-hi:#a78bfa;--bg:#0b0d12;--card:#1d2028;--text:#f2f3f5;--sub:#b8bdc9;--line:rgba(255,255,255,.08);}
@@ -101,7 +101,7 @@
       <div class="splash-glow"></div>
       <div class="splash-logo">▶</div>
     </div>
-    <div class="splash-brand">CineMax<span>TV</span></div>
+    <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
     <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.78</div>
     <div class="splash-bar"><i></i></div>
@@ -110,7 +110,7 @@
   <div id="screenProfiles" class="screen active">
     <div class="wrap">
       <div class="head-sub">
-        <div class="brand-row"><div class="logo-box">▶</div><div class="brand-text">CineMax<span>TV</span></div></div>
+        <div class="brand-row"><div class="logo-box">▶</div><div class="brand-text">Cine<span>CLT</span></div></div>
         Quem está assistindo?
       </div>
       <div class="profile-grid" id="profileGrid"></div>
@@ -127,7 +127,7 @@
       <div class="nav-left">
         <div style="display:flex;align-items:center;gap:12px;">
           <div class="logo-box" style="width:44px;height:44px;font-size:24px;border-radius:11px;">▶</div>
-          <div class="brand-text" style="font-size:26px;">CineMax<span>TV</span></div>
+          <div class="brand-text" style="font-size:26px;">Cine<span>CLT</span></div>
         </div>
         <div class="nav-links" id="navLinks">
           <span class="nav-link active focusable" data-cat="home" tabindex="0">INÍCIO</span>
@@ -599,11 +599,11 @@ function checkUpdate(){
           setTimeout(function(){location.href=base+'/index.html';},1600);
         }
       }else{
-        console.log('[CineMax] Versão atual já é a mais recente (v'+APP_VERSION+').');
+        console.log('[CineCLT] Versão atual já é a mais recente (v'+APP_VERSION+').');
       }
-    }catch(e){console.log('[CineMax] version.json inválido',e);}
+    }catch(e){console.log('[CineCLT] version.json inválido',e);}
   };
-  x.onerror=function(){console.log('[CineMax] Sem conexão com a base remota.');};
+  x.onerror=function(){console.log('[CineCLT] Sem conexão com a base remota.');};
   x.send();
 }
 /* verificação: no início e de hora em hora */
