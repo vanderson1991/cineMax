@@ -103,7 +103,7 @@
     </div>
     <div class="splash-brand">CineMax<span>TV</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.6.7</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.78</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -144,7 +144,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.6.7</div>
+    <div id="versionTag">v2.78</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -202,7 +202,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.6.7';
+var APP_VERSION='2.78';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
@@ -589,12 +589,15 @@ function checkUpdate(){
     try{
       var v=JSON.parse(x.responseText);
       if(v.version&&String(v.version)!==APP_VERSION){
-        toast('Atualização v'+v.version+' disponível!');
-        setTimeout(function(){
-          if(location.protocol==='http:'||location.protocol==='https:'){
-            location.reload();
-          }
-        },2800);
+        var isRemote=(location.protocol==='http:'||location.protocol==='https:');
+        if(isRemote){
+          toast('Atualização v'+v.version+' disponível!');
+          setTimeout(function(){location.reload();},2800);
+        }else{
+          /* modo APK/local: navega sozinho para a versão online mais nova */
+          toast('Atualizando para v'+v.version+'...');
+          setTimeout(function(){location.href=base+'/index.html';},1600);
+        }
       }else{
         console.log('[CineMax] Versão atual já é a mais recente (v'+APP_VERSION+').');
       }

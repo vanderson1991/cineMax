@@ -1,5 +1,5 @@
 ====================================
-  CineMax TV - ProjetinhoTv  (v2.6.7 FINAL)
+  CineMax TV - ProjetinhoTv  (v2.78 FINAL)
 ====================================
 App de TV gratuito (HTML/JS) - tela base 1280x720
 que se ajusta a qualquer resolucao de Smart TV.
