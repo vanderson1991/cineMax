@@ -66,10 +66,9 @@
   .row{margin-bottom:34px;content-visibility:auto;contain-intrinsic-size:auto 420px;}
   .row-title{font-size:26px;font-weight:800;padding:0 44px;margin-bottom:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);}
   .row-track{display:flex;gap:6px;padding:6px 44px;overflow-x:hidden;}
-  .card{flex:0 0 auto;width:176px;cursor:pointer;border-radius:12px;overflow:hidden;position:relative;border:3px solid transparent;}
-  .card img{width:100%;aspect-ratio:2/3;object-fit:cover;object-position:center;display:block;background:#111;}
+  .card{flex:0 0 auto;width:176px;height:264px;cursor:pointer;border-radius:12px;overflow:hidden;position:relative;border:3px solid transparent;background:#111;}
+  .card img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;background:#111;}
   .card-title{position:absolute;left:0;right:0;bottom:0;padding:30px 10px 8px;background:linear-gradient(0deg,rgba(0,0,0,.95),transparent);font-size:16px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.95);}
-  .play-badge{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.95);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;z-index:2;}
   .empty-hint{text-align:center;padding:70px 0;color:#9aa0ad;font-size:23px;}
   .modal-layer{position:absolute;inset:0;z-index:80;display:none;background:rgba(0,0,0,.82);}
   .modal-layer.active{display:flex;align-items:center;justify-content:center;}
@@ -88,11 +87,16 @@
   .toast{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:13px 26px;border-radius:30px;font-size:18px;font-weight:600;z-index:120;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);}
   .toast.show{opacity:1;}
   #versionTag{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:17px;font-weight:800;color:#ffd54a;z-index:60;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;background:rgba(0,0,0,.55);padding:6px 16px;border-radius:9px;}
-  .detail-media{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin-bottom:18px;}
-  .detail-media img{width:100%;height:100%;object-fit:cover;display:block;}
-  .detail-title{font-size:34px;margin-bottom:6px;}
-  .detail-meta{font-size:18px;color:var(--sub);margin-bottom:12px;}
-  .detail-desc{font-size:17px;color:#cfd3dc;line-height:1.5;margin-bottom:20px;}
+  .detail-flex{display:flex;gap:28px;align-items:flex-start;}
+  .detail-media{width:300px;height:450px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.55);}
+  .detail-media img{width:100%;height:100%;object-fit:contain;display:block;background:#0d0f14;}
+  .detail-info{flex:1;min-width:0;}
+  .detail-title{font-size:36px;line-height:1.15;margin-bottom:8px;}
+  .detail-meta{font-size:18px;color:var(--sub);margin-bottom:14px;}
+  .detail-desc{font-size:17px;color:#cfd3dc;line-height:1.55;margin-bottom:20px;max-height:235px;overflow-y:auto;}
+  .player-box{width:1060px;max-width:94vw;display:flex;flex-direction:column;align-items:flex-end;}
+  .player-frame{width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
+  .player-frame iframe,.player-frame video{width:100%;height:100%;border:0;background:#000;}
 </style>
 </head>
 <body>
@@ -105,7 +109,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.85</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.86</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -180,17 +184,29 @@
 
   <!-- DETAIL -->
   <div class="modal-layer" id="modalDetail">
-    <div class="modal" style="width:820px;">
-      <div class="detail-media"><img id="detailPoster" alt=""></div>
-      <h2 class="detail-title" id="detailTitle"></h2>
-      <div class="detail-meta" id="detailMeta"></div>
-      <div class="detail-desc" id="detailDesc"></div>
+    <div class="modal" style="width:860px;">
+      <div class="detail-flex">
+        <div class="detail-media"><img id="detailPoster" alt=""></div>
+        <div class="detail-info">
+          <h2 class="detail-title" id="detailTitle"></h2>
+          <div class="detail-meta" id="detailMeta"></div>
+          <div class="detail-desc" id="detailDesc"></div>
+        </div>
+      </div>
       <div class="modal-actions">
         <button class="btn ghost focusable" id="btnDetailFav" tabindex="0">â˜… Favorito</button>
         <div class="spacer"></div>
         <button class="btn ghost focusable" id="btnDetailClose" tabindex="0">Fechar</button>
         <button class="btn primary focusable" id="btnDetailPlay" tabindex="0">â–¶ Assistir</button>
       </div>
+    </div>
+  </div>
+
+  <!-- PLAYER -->
+  <div class="modal-layer" id="playerLayer" style="background:#000;">
+    <div class="player-box">
+      <div class="player-frame" id="playerFrame"></div>
+      <button class="btn ghost focusable" style="margin-top:22px;" id="btnPlayerClose" tabindex="0">âœ• Fechar player</button>
     </div>
   </div>
 
@@ -204,7 +220,7 @@
    Quando preenchida, o app avisa sozinho quando houver versÃ£o nova.
    Manter vazio = modo offline (sÃ³ dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.85';
+var APP_VERSION='2.86';
 
 /* ============ ESCALA AUTOMÃTICA (qualquer resoluÃ§Ã£o da TV) ============ */
 var stage=document.getElementById('stage');
@@ -404,7 +420,7 @@ function renderRows(){
       if(!catalog[id])return;
       var c=catalog[id];
       var card=document.createElement('div');card.className='card focusable';card.tabIndex=0;card.setAttribute('data-id',id);
-      card.innerHTML='<img loading="lazy" decoding="async" src="'+c.img+'" alt=""><span class="play-badge">â–¶</span><div class="card-title">'+esc(c.t)+'</div>';
+      card.innerHTML='<img loading="lazy" decoding="async" src="'+c.img+'" alt=""><div class="card-title">'+esc(c.t)+'</div>';
       tr.appendChild(card);
     });
     frag.appendChild(row);
@@ -427,10 +443,32 @@ function openDetail(id){
   S('detailTitle').textContent=it.t;S('detailMeta').textContent=it.meta;S('detailDesc').textContent=it.desc;
   S('detailPoster').src=it.img;S('modalDetail').classList.add('active');_fcInvalidate();S('btnDetailPlay').focus();
 }
+var _playerFromDetail=false;
+function ytId(url){
+  var m;url=String(url||'');
+  m=url.match(/(?:youtu\.be\/|watch\?.*v=)([\w-]{11})/);if(m)return m[1];
+  m=url.match(/\/(?:embed|shorts)\/([\w-]{11})/);if(m)return m[1];
+  return null;
+}
+function openPlayer(html){
+  _playerFromDetail=document.getElementById('modalDetail').classList.contains('active');
+  document.querySelectorAll('.modal-layer').forEach(function(m){m.classList.remove('active');});
+  S('playerFrame').innerHTML=html;
+  S('playerLayer').classList.add('active');_fcInvalidate();S('btnPlayerClose').focus();
+}
+function closePlayer(){
+  S('playerFrame').innerHTML='';
+  S('playerLayer').classList.remove('active');_fcInvalidate();
+  if(_playerFromDetail){S('modalDetail').classList.add('active');S('btnDetailPlay').focus();}
+  else{var n=document.querySelector('#screenHome .nav-link');if(n)n.focus();}
+}
 function playVideo(id){
   var url=LINKS[id];
   if(!url){url='https://www.youtube.com/results?search_query='+encodeURIComponent((catalog[id]?catalog[id].t:'trailer')+' filme completo');}
+  var yid=ytId(url);
   try{
+    if(yid){openPlayer('<iframe src="https://www.youtube-nocookie.com/embed/'+yid+'?autoplay=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>');return;}
+    if(/\.(mp4|webm|ogv|m4v)(\?|$)/i.test(url)||/\.m3u8(\?|$)/i.test(url)){openPlayer('<video controls autoplay playsinline src="'+esc(url)+'"></video>');return;}
     if(window.Cine&&window.Cine.play){window.Cine.play(url);}
     else{window.open(url,'_blank');}
   }catch(e){try{window.open(url,'_blank');}catch(e2){toast('NÃ£o foi possÃ­vel abrir o player.');}}
@@ -522,6 +560,7 @@ function activate(elm,box){
   else if(elm.id==='btnDetailClose'){S('modalDetail').classList.remove('active');_fcInvalidate();}
   else if(elm.id==='btnDetailFav')toggleFav(detailId);
   else if(elm.id==='btnDetailPlay')playVideo(detailId);
+  else if(elm.id==='btnPlayerClose')closePlayer();
 }
 
 document.addEventListener('keydown',function(e){
@@ -529,6 +568,7 @@ document.addEventListener('keydown',function(e){
   var modal=document.querySelector('.modal-layer.active');
   var box=modal||scr;
   if(e.key==='Escape'){
+    if(S('playerLayer').classList.contains('active')){closePlayer();return;}
     if(modal){modal.classList.remove('active');_fcInvalidate();}
     else if(scr.id==='screenHome')showScreen('Profiles');
     return;
@@ -569,7 +609,8 @@ S('btnConfirmCancel').addEventListener('click',function(){S('modalConfirm').clas
 S('btnConfirmYes').addEventListener('click',doDelete);
 S('btnDetailClose').addEventListener('click',function(){S('modalDetail').classList.remove('active');_fcInvalidate();});
 S('btnDetailFav').addEventListener('click',function(){toggleFav(detailId);});
-S('btnDetailPlay').addEventListener('click',function(){toast('Reproduzindo: '+S('detailTitle').textContent);});
+S('btnDetailPlay').addEventListener('click',function(){playVideo(detailId);});
+S('btnPlayerClose').addEventListener('click',closePlayer);
 
 renderProfiles();
 
