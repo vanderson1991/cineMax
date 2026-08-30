@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -99,23 +99,23 @@
   <div id="splash" class="splash">
     <div class="splash-logo-wrap">
       <div class="splash-glow"></div>
-      <div class="splash-logo">▶</div>
+      <div class="splash-logo">â–¶</div>
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.79</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.80</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
   <div id="screenProfiles" class="screen active">
     <div class="wrap">
       <div class="head-sub">
-        <div class="brand-row"><div class="logo-box">▶</div><div class="brand-text">Cine<span>CLT</span></div></div>
-        Quem está assistindo?
+        <div class="brand-row"><div class="logo-box">â–¶</div><div class="brand-text">Cine<span>CLT</span></div></div>
+        Quem estÃ¡ assistindo?
       </div>
       <div class="profile-grid" id="profileGrid"></div>
       <div class="manage-bar">
-        <button class="btn ghost focusable" id="btnAddProfile" tabindex="0">＋ Adicionar perfil</button>
+        <button class="btn ghost focusable" id="btnAddProfile" tabindex="0">ï¼‹ Adicionar perfil</button>
         <button class="btn ghost focusable" id="btnEditMode" tabindex="0">Gerenciar perfis</button>
       </div>
     </div>
@@ -126,13 +126,13 @@
     <div class="nav">
       <div class="nav-left">
         <div style="display:flex;align-items:center;gap:12px;">
-          <div class="logo-box" style="width:44px;height:44px;font-size:24px;border-radius:11px;">▶</div>
+          <div class="logo-box" style="width:44px;height:44px;font-size:24px;border-radius:11px;">â–¶</div>
           <div class="brand-text" style="font-size:26px;">Cine<span>CLT</span></div>
         </div>
         <div class="nav-links" id="navLinks">
-          <span class="nav-link active focusable" data-cat="home" tabindex="0">INÍCIO</span>
+          <span class="nav-link active focusable" data-cat="home" tabindex="0">INÃCIO</span>
           <span class="nav-link focusable" data-cat="filmes" tabindex="0">FILMES</span>
-          <span class="nav-link focusable" data-cat="series" tabindex="0">SÉRIES</span>
+          <span class="nav-link focusable" data-cat="series" tabindex="0">SÃ‰RIES</span>
           <span class="nav-link focusable" data-cat="minha" tabindex="0">MINHA LISTA</span>
           <span class="nav-link focusable" data-cat="favoritos" tabindex="0">FAVORITOS</span>
         </div>
@@ -144,7 +144,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.79</div>
+    <div id="versionTag">v2.80</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -154,7 +154,7 @@
       <div class="desc">Escolha um nome e uma das imagens de perfil.</div>
       <div class="field"><label>Nome do perfil</label>
         <input class="name-input focusable" id="profileNameInput" type="text" maxlength="20" placeholder="Digite o nome"></div>
-      <div class="field"><label>Ícone</label><div class="icon-picker" id="profileIconPicker"></div></div>
+      <div class="field"><label>Ãcone</label><div class="icon-picker" id="profileIconPicker"></div></div>
       <div class="modal-actions">
         <button class="btn danger focusable" id="btnModalDelete" tabindex="0" style="display:none;">Apagar</button>
         <div class="spacer"></div>
@@ -168,7 +168,7 @@
   <div class="modal-layer" id="modalConfirm">
     <div class="modal" style="width:500px;">
       <h2>Apagar perfil?</h2>
-      <div class="desc" id="modalConfirmText">Esta ação não pode ser desfeita.</div>
+      <div class="desc" id="modalConfirmText">Esta aÃ§Ã£o nÃ£o pode ser desfeita.</div>
       <div class="modal-actions">
         <button class="btn ghost focusable" id="btnConfirmCancel" tabindex="0">Cancelar</button>
         <button class="btn danger focusable" id="btnConfirmYes" tabindex="0">Apagar</button>
@@ -184,10 +184,10 @@
       <div class="detail-meta" id="detailMeta"></div>
       <div class="detail-desc" id="detailDesc"></div>
       <div class="modal-actions">
-        <button class="btn ghost focusable" id="btnDetailFav" tabindex="0">★ Favorito</button>
+        <button class="btn ghost focusable" id="btnDetailFav" tabindex="0">â˜… Favorito</button>
         <div class="spacer"></div>
         <button class="btn ghost focusable" id="btnDetailClose" tabindex="0">Fechar</button>
-        <button class="btn primary focusable" id="btnDetailPlay" tabindex="0">▶ Assistir</button>
+        <button class="btn primary focusable" id="btnDetailPlay" tabindex="0">â–¶ Assistir</button>
       </div>
     </div>
   </div>
@@ -197,14 +197,14 @@
 
 <script>
 "use strict";
-/* ============ CONFIGURAÇÃO / VERSÃO ============ */
-/* COLE AQUI a URL onde o app estará hospedado (ex: https://seu-site.com/cinemax/)
-   Quando preenchida, o app avisa sozinho quando houver versão nova.
-   Manter vazio = modo offline (só dentro do APK, aviso manual). */
+/* ============ CONFIGURAÃ‡ÃƒO / VERSÃƒO ============ */
+/* COLE AQUI a URL onde o app estarÃ¡ hospedado (ex: https://seu-site.com/cinemax/)
+   Quando preenchida, o app avisa sozinho quando houver versÃ£o nova.
+   Manter vazio = modo offline (sÃ³ dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.79';
+var APP_VERSION='2.80';
 
-/* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
+/* ============ ESCALA AUTOMÃTICA (qualquer resoluÃ§Ã£o da TV) ============ */
 var stage=document.getElementById('stage');
 function fit(){
   var w=window.innerWidth||document.documentElement.clientWidth;
@@ -231,40 +231,40 @@ var CAPAS=[
 "ff7f6ff8-698a-40a9-8e87-572d31339d1e_m.jpg"];
 function img(i){return 'capas/'+CAPAS[i%CAPAS.length];}
 
-/* ícones de perfil (recortados dos mosaicos enviados) */
+/* Ã­cones de perfil (recortados dos mosaicos enviados) */
 var AVATARS=["av1_01.png","av1_02.png","av1_03.png","av1_04.png","av1_05.png","av1_06.png","av1_07.png","av1_08.png","av1_09.png","av1_10.png","av1_11.png","av1_12.png","av1_13.png","av1_14.png","av1_15.png","av1_16.png","av1_17.png","av1_18.png","av1_19.png","av1_20.png","av1_21.png","av1_22.png","av1_23.png","av1_24.png","av1_25.png","av1_26.png","av1_27.png","av1_28.png","av2_01.png","av2_02.png","av2_03.png","av2_04.png","av2_05.png","av2_06.png","av2_07.png","av2_08.png","av2_09.png","av2_10.png","av2_11.png","av2_12.png","av2_13.png","av2_14.png","av2_15.png","av2_16.png","av2_17.png","av2_18.png","av2_19.png","av2_20.png","av2_21.png","av3_01.png","av3_02.png","av3_03.png","av3_04.png","av3_05.png","av3_06.png","av3_07.png","av3_08.png","av3_09.png","av3_10.png","av3_11.png","av3_12.png","av3_13.png","av3_14.png","av3_15.png","av3_16.png","av3_17.png","av3_18.png"];
 
 var catalog=[
-{id:0,t:"Rosario",cat:"Filmes",img:img(0),meta:"Suspense · Drama · 14+",desc:"Uma história de mistério, fé e segredos que prende do início ao fim."},
-{id:1,t:"O Corvo",cat:"Filmes",img:img(1),meta:"Ação · Fantasia · 16+",desc:"Um homem retorna dos mortos para fazer justiça."},
-{id:2,t:"Implacável",cat:"Filmes",img:img(2),meta:"Ação · 16+",desc:"A justiça nas próprias mãos, sem perdão."},
-{id:3,t:"A Profecia do Mal",cat:"Filmes",img:img(3),meta:"Terror · 18+",desc:"Um mal profundo começa a despertar."},
-{id:4,t:"Vai que Cola - O Filme",cat:"Filmes",img:img(4),meta:"Comédia · 12+",desc:"As confusões do pessoal mais querido do Brasil."},
-{id:5,t:"Exorcismo Sagrado",cat:"Filmes",img:img(5),meta:"Terror · 16+",desc:"Um padre em guerra contra o demônio."},
-{id:6,t:"Superhost",cat:"Filmes",img:img(6),meta:"Terror · 16+",desc:"Uma hospedagem que vira um pesadelo."},
-{id:7,t:"Vingadora",cat:"Filmes",img:img(7),meta:"Ação · 14+",desc:"Uma guardiã em defesa da justiça."},
-{id:8,t:"Terrifier 2",cat:"Filmes",img:img(8),meta:"Terror · 18+",desc:"O palhaço mais aterrorizante do cinema volta."},
-{id:9,t:"Rambo: Até o Fim",cat:"Filmes",img:img(9),meta:"Ação · 16+",desc:"A última batalha de Rambo para salvar quem ama."},
-{id:10,t:"Panda vs. Aliens",cat:"Filmes",img:img(10),meta:"Animação · Livre",desc:"Um panda contra uma invasão alienígena."},
-{id:11,t:"A Semente do Mal",cat:"Filmes",img:img(11),meta:"Terror · 16+",desc:"O mal cresce em silêncio."},
-{id:12,t:"Código Alarum",cat:"Filmes",img:img(12),meta:"Ação · 14+",desc:"Códigos, conspirações e adrenalina."},
-{id:13,t:"Blindado",cat:"Filmes",img:img(13),meta:"Ação · 14+",desc:"Uma perseguição implacável pelas ruas."},
-{id:14,t:"Serra das Almas",cat:"Filmes",img:img(14),meta:"Terror · 18+",desc:"Segredos sombrios escondidos na serra."},
-{id:15,t:"O Exorcismo",cat:"Filmes",img:img(15),meta:"Terror · 16+",desc:"O mal que entra em uma família."},
-{id:16,t:"Screamboat: Terror a Bordo",cat:"Filmes",img:img(16),meta:"Terror · 18+",desc:"Pânico e sangue em um cruzeiro."},
-{id:17,t:"O Rei da Feira",cat:"Filmes",img:img(17),meta:"Drama · 14+",desc:"A vida sob os holofotes da feira."},
-{id:18,t:"Zona de Risco",cat:"Filmes",img:img(18),meta:"Ação · 16+",desc:"Missão em território hostil."},
-{id:19,t:"As Aventuras de Robinson Crusoé",cat:"Filmes",img:img(19),meta:"Animação · Livre",desc:"A clássica aventura em uma ilha."},
-{id:20,t:"Big Pai, Big Filho",cat:"Filmes",img:img(20),meta:"Animação · Livre",desc:"Um garoto e seu pai gigante."},
-{id:21,t:"Não Abra!",cat:"Filmes",img:img(21),meta:"Terror · 16+",desc:"O que está dentro precisa sair."},
-{id:22,t:"Floresta Maldita",cat:"Filmes",img:img(22),meta:"Terror · 16+",desc:"Não entre na floresta."}];
+{id:0,t:"Rosario",cat:"Filmes",img:img(0),meta:"Suspense Â· Drama Â· 14+",desc:"Uma histÃ³ria de mistÃ©rio, fÃ© e segredos que prende do inÃ­cio ao fim."},
+{id:1,t:"O Corvo",cat:"Filmes",img:img(1),meta:"AÃ§Ã£o Â· Fantasia Â· 16+",desc:"Um homem retorna dos mortos para fazer justiÃ§a."},
+{id:2,t:"ImplacÃ¡vel",cat:"Filmes",img:img(2),meta:"AÃ§Ã£o Â· 16+",desc:"A justiÃ§a nas prÃ³prias mÃ£os, sem perdÃ£o."},
+{id:3,t:"A Profecia do Mal",cat:"Filmes",img:img(3),meta:"Terror Â· 18+",desc:"Um mal profundo comeÃ§a a despertar."},
+{id:4,t:"Vai que Cola - O Filme",cat:"Filmes",img:img(4),meta:"ComÃ©dia Â· 12+",desc:"As confusÃµes do pessoal mais querido do Brasil."},
+{id:5,t:"Exorcismo Sagrado",cat:"Filmes",img:img(5),meta:"Terror Â· 16+",desc:"Um padre em guerra contra o demÃ´nio."},
+{id:6,t:"Superhost",cat:"Filmes",img:img(6),meta:"Terror Â· 16+",desc:"Uma hospedagem que vira um pesadelo."},
+{id:7,t:"Vingadora",cat:"Filmes",img:img(7),meta:"AÃ§Ã£o Â· 14+",desc:"Uma guardiÃ£ em defesa da justiÃ§a."},
+{id:8,t:"Terrifier 2",cat:"Filmes",img:img(8),meta:"Terror Â· 18+",desc:"O palhaÃ§o mais aterrorizante do cinema volta."},
+{id:9,t:"Rambo: AtÃ© o Fim",cat:"Filmes",img:img(9),meta:"AÃ§Ã£o Â· 16+",desc:"A Ãºltima batalha de Rambo para salvar quem ama."},
+{id:10,t:"Panda vs. Aliens",cat:"Filmes",img:img(10),meta:"AnimaÃ§Ã£o Â· Livre",desc:"Um panda contra uma invasÃ£o alienÃ­gena."},
+{id:11,t:"A Semente do Mal",cat:"Filmes",img:img(11),meta:"Terror Â· 16+",desc:"O mal cresce em silÃªncio."},
+{id:12,t:"CÃ³digo Alarum",cat:"Filmes",img:img(12),meta:"AÃ§Ã£o Â· 14+",desc:"CÃ³digos, conspiraÃ§Ãµes e adrenalina."},
+{id:13,t:"Blindado",cat:"Filmes",img:img(13),meta:"AÃ§Ã£o Â· 14+",desc:"Uma perseguiÃ§Ã£o implacÃ¡vel pelas ruas."},
+{id:14,t:"Serra das Almas",cat:"Filmes",img:img(14),meta:"Terror Â· 18+",desc:"Segredos sombrios escondidos na serra."},
+{id:15,t:"O Exorcismo",cat:"Filmes",img:img(15),meta:"Terror Â· 16+",desc:"O mal que entra em uma famÃ­lia."},
+{id:16,t:"Screamboat: Terror a Bordo",cat:"Filmes",img:img(16),meta:"Terror Â· 18+",desc:"PÃ¢nico e sangue em um cruzeiro."},
+{id:17,t:"O Rei da Feira",cat:"Filmes",img:img(17),meta:"Drama Â· 14+",desc:"A vida sob os holofotes da feira."},
+{id:18,t:"Zona de Risco",cat:"Filmes",img:img(18),meta:"AÃ§Ã£o Â· 16+",desc:"MissÃ£o em territÃ³rio hostil."},
+{id:19,t:"As Aventuras de Robinson CrusoÃ©",cat:"Filmes",img:img(19),meta:"AnimaÃ§Ã£o Â· Livre",desc:"A clÃ¡ssica aventura em uma ilha."},
+{id:20,t:"Big Pai, Big Filho",cat:"Filmes",img:img(20),meta:"AnimaÃ§Ã£o Â· Livre",desc:"Um garoto e seu pai gigante."},
+{id:21,t:"NÃ£o Abra!",cat:"Filmes",img:img(21),meta:"Terror Â· 16+",desc:"O que estÃ¡ dentro precisa sair."},
+{id:22,t:"Floresta Maldita",cat:"Filmes",img:img(22),meta:"Terror Â· 16+",desc:"NÃ£o entre na floresta."}];
 
 var rowsDef=[
 {title:"Continua assistindo",items:[0,1,2,3,4,5,6]},
 {title:"Filmes em destaque",items:[11,12,13,14,16,18,19,22]},
 {title:"Terror & Suspense",items:[3,5,6,8,11,14,15,16,21,22]},
-{title:"Ação",items:[1,2,7,9,12,13,18,20]},
-{title:"Animação & Família",items:[10,17,19,20]}];;
+{title:"AÃ§Ã£o",items:[1,2,7,9,12,13,18,20]},
+{title:"AnimaÃ§Ã£o & FamÃ­lia",items:[10,17,19,20]}];;
 
 /* ============ helpers ============ */
 function S(id){return document.getElementById(id);}
@@ -291,7 +291,7 @@ function renderProfiles(){
   if(!editing){
     var a=document.createElement('div');
     a.className='profile-tile add-tile focusable';a.tabIndex=0;a.setAttribute('data-add','1');
-    a.innerHTML='<div class="profile-avatar">＋</div><div class="profile-name" style="color:#9aa0ad;">Adicionar</div><div class="profile-hint">&nbsp;</div>';
+    a.innerHTML='<div class="profile-avatar">ï¼‹</div><div class="profile-name" style="color:#9aa0ad;">Adicionar</div><div class="profile-hint">&nbsp;</div>';
     grid.appendChild(a);
   }
   S('btnEditMode').textContent=editing?'Concluir':'Gerenciar perfis';
@@ -321,9 +321,9 @@ function renderIcons(){
 function saveProfileForm(){
   var name=S('profileNameInput').value.trim();
   if(!name)return toast('Digite o nome do perfil.');
-  if(!selIcon)return toast('Escolha um ícone.');
+  if(!selIcon)return toast('Escolha um Ã­cone.');
   if(editingIdx!=null){profiles[editingIdx].name=name;profiles[editingIdx].icon=selIcon;toast('Perfil atualizado!');}
-  else{if(profiles.length>=6)return toast('Máximo de 6 perfis.');profiles.push({name:name,icon:selIcon});toast('Perfil criado!');}
+  else{if(profiles.length>=6)return toast('MÃ¡ximo de 6 perfis.');profiles.push({name:name,icon:selIcon});toast('Perfil criado!');}
   saveProfiles();S('modalProfile').classList.remove('active');editingIdx=null;renderProfiles();
 }
 function confirmDelete(){
@@ -358,9 +358,9 @@ function renderHome(){
       '<div class="hero-title">'+esc(it.t)+'</div>'+
       '<div class="hero-meta">'+esc(it.meta)+'</div>'+
       '<div class="hero-actions">'+
-        '<button class="btn primary focusable" data-play="'+it.id+'" tabindex="0">▶ Assistir</button>'+
-        '<button class="btn ghost focusable" data-mylist="'+it.id+'" tabindex="0">＋ Minha lista</button>'+
-        '<button class="btn ghost focusable" data-fav="'+it.id+'" tabindex="0">★ Favorito</button>'+
+        '<button class="btn primary focusable" data-play="'+it.id+'" tabindex="0">â–¶ Assistir</button>'+
+        '<button class="btn ghost focusable" data-mylist="'+it.id+'" tabindex="0">ï¼‹ Minha lista</button>'+
+        '<button class="btn ghost focusable" data-fav="'+it.id+'" tabindex="0">â˜… Favorito</button>'+
       '</div>'+
     '</div>';
   renderRows();
@@ -405,7 +405,7 @@ function toggleMyList(id){
   if(!current.list)current.list=[];
   var i=current.list.indexOf(id);
   if(i>=0){current.list.splice(i,1);toast('Removido da Minha lista.');}
-  else{current.list.push(id);toast('Adicionado à Minha lista.');}
+  else{current.list.push(id);toast('Adicionado Ã  Minha lista.');}
   saveProfiles();renderRows();
 }
 function toggleFav(id){
@@ -423,7 +423,7 @@ function getFocusables(screen){
     var r=e.getBoundingClientRect();return r.width>0&&r.height>0;
   });
 }
-/* cache de posições do foco (evita getBoundingClientRect em toda tecla) */
+/* cache de posiÃ§Ãµes do foco (evita getBoundingClientRect em toda tecla) */
 var _fc={t:0,box:null,items:[],rc:[]};
 function _fcInvalidate(){_fc.t=0;_fc.box=null;}
 function _fcSync(box){
@@ -546,7 +546,7 @@ function playSplashSound(){
     if(!window.__sndctx)window.__sndctx=new AC();
     if(window.__sndctx.state==='suspended')window.__sndctx.resume();
     var ctx=window.__sndctx;
-    // tom quente e suave (seno + leve harmônico) para um 'ta-dum' agradável
+    // tom quente e suave (seno + leve harmÃ´nico) para um 'ta-dum' agradÃ¡vel
     function tone(freq,at,dur,vol){
       var t=ctx.currentTime+at;
       var o=ctx.createOscillator();o.type='sine';o.frequency.setValueAtTime(freq,t);
@@ -568,20 +568,20 @@ function trySplashSound(){
   if(sndPlayed)return;
   playSplashSound();sndPlayed=true;
 }
-// desbloqueia o áudio (autoplay) no primeiro toque, sem tocar antes do pico
+// desbloqueia o Ã¡udio (autoplay) no primeiro toque, sem tocar antes do pico
 document.addEventListener('keydown',function(){
   try{if(window.__sndctx&&window.__sndctx.state==='suspended')window.__sndctx.resume();}catch(e){}
 },{once:true});
 // toca o som no pico do logo (~1.15s) e depois some
 setTimeout(function(){trySplashSound();},1000);
 
-/* Splash: exibe logo e some ao fim da animação */
+/* Splash: exibe logo e some ao fim da animaÃ§Ã£o */
 setTimeout(function(){
   var sp=S('splash');sp.classList.add('hide');
   setTimeout(function(){sp.style.display='none';},420);
 },1700);
 
-/* ============ AUTO-ATUALIZAÇÃO ============ */
+/* ============ AUTO-ATUALIZAÃ‡ÃƒO ============ */
 function checkUpdate(){
   if(!REMOTE_BASE)return;
   var base=REMOTE_BASE.replace(/\/+$/,'');
@@ -594,22 +594,22 @@ function checkUpdate(){
       if(v.version&&String(v.version)!==APP_VERSION){
         var isRemote=(location.protocol==='http:'||location.protocol==='https:');
         if(isRemote){
-          toast('Atualização v'+v.version+' disponível!');
+          toast('AtualizaÃ§Ã£o v'+v.version+' disponÃ­vel!');
           setTimeout(function(){location.reload();},2800);
         }else{
-          /* modo APK/local: navega sozinho para a versão online mais nova */
+          /* modo APK/local: navega sozinho para a versÃ£o online mais nova */
           toast('Atualizando para v'+v.version+'...');
           setTimeout(function(){location.href=base+'/index.html';},1600);
         }
       }else{
-        console.log('[CineCLT] Versão atual já é a mais recente (v'+APP_VERSION+').');
+        console.log('[CineCLT] VersÃ£o atual jÃ¡ Ã© a mais recente (v'+APP_VERSION+').');
       }
-    }catch(e){console.log('[CineCLT] version.json inválido',e);}
+    }catch(e){console.log('[CineCLT] version.json invÃ¡lido',e);}
   };
-  x.onerror=function(){console.log('[CineCLT] Sem conexão com a base remota.');};
+  x.onerror=function(){console.log('[CineCLT] Sem conexÃ£o com a base remota.');};
   x.send();
 }
-/* verificação: no início e de hora em hora */
+/* verificaÃ§Ã£o: no inÃ­cio e de hora em hora */
 setTimeout(checkUpdate,2400);
 setInterval(checkUpdate,3600000);
 </script>
