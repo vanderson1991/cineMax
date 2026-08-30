@@ -1,0 +1,72 @@
+=====================================================
+  CINEMAX TV — ARQUIVO PARA REABRIR O PROJETO
+  (guardar junto da pasta ProjetinhoTv no celular)
+=====================================================
+
+Se você perder esta conversa, este arquivo permite
+reconstruir/reabrir o projeto rapidamente.
+
+-----------------------------------------------------
+1) O QUE É
+-----------------------------------------------------
+App de TV gratuito (HTML/JS) chamado CineMax TV.
+- Tela base 1280x720 que se ajusta a qualquer resolução
+  de Smart TV / Android TV automaticamente.
+- Navegação por controle remoto (setas + Enter/OK + Esc).
+- Perfis de usuário locais (criar/editar/apagar, máx. 6),
+  salvos no navegador (localStorage).
+
+-----------------------------------------------------
+2) ARQUIVOS (pasta ProjetinhoTv)
+-----------------------------------------------------
+  index.html   -> o app completo (é só abrir no navegador)
+  capas/       -> 23 pôsteres de filmes (catálogo, formato retrato 2:3)
+  avatares/    -> 67 avatares de perfil + 3 originais
+  previews/    -> prévias do visual (home, perfis, catálogo, splash, TV)
+  LEIA-ME.txt  -> instruções de uso
+
+Para abrir: toque em index.html -> abrir com navegador (Chrome).
+O app se ajusta à tela.
+
+-----------------------------------------------------
+3) DECISÕES DE MARCA / VISUAL
+-----------------------------------------------------
+- Cor de destaque: roxa  #8b5cf6  (no CSS é a variável --orange).
+  Tom claro auxiliar: #a78bfa. Gradiente do logo: #a78bfa->#7c3aed.
+- Perfil do usuário no TOPO, grande e visível:
+  avatar ~84px circular + nome ~32px em negrito (canto sup. direito).
+- Capas da tela principal lado a lado (horizontais, encaixadas,
+  gap ~6px), mantendo a proporção vertical 2:3.
+- Splash de abertura com logo estilizado:
+  quadrado arredondado em gradiente roxo com ícone ▶,
+  "CineMax" branco + "TV" roxo com glow, tagline "FILMES FREE".
+  Animação de entrada (zoom+rotação+fade+anel pulsante), ~1.1s,
+  e some suave após ~2.35s.
+- Efeito sonoro no início do splash: gerado com Web Audio API
+  (não precisa de arquivo .mp3). Toca no PICO do logo (~1.15s),
+  com fallback de autoplay (primeira tecla só desbloqueia o áudio).
+  Notas do sino: 880Hz -> 1318,5Hz.
+
+-----------------------------------------------------
+4) COMO RECONSTRUIR / AJUSTAR
+-----------------------------------------------------
+Edite index.html. Locais-chave:
+- Cor: :root { --orange:#8b5cf6; }
+- Capas: var CAPAS = [ ... ] (lista dos arquivos de capas/)
+- Avatares: var AVATARS = [ ... ] (lista dos arquivos de avatares/)
+- Catálogo: var catalog = [ ... ]
+- Splash: bloco HTML id="splash" + CSS .splash-* + @keyframes
+  logoIn/glow/fadeUp/load.
+- Som: funções playSplashSound() / trySplashSound() (Web Audio),
+  disparo em setTimeout(...,1150) — pico do logo.
+- Perfil topo: classes .nav-profile .avatar e #navProfileName.
+
+-----------------------------------------------------
+5) COMO REABRIR "AQUI" (na plataforma)
+-----------------------------------------------------
+- O pacote ProjetinhoTv.zip contém tudo. Para reabrir numa nova
+  conversa, basta recarregar o zip (ou as pastas) e falar:
+  "reabra o projeto CineMax TV a partir da pasta ProjetinhoTv".
+- O app em si NÃO precisa de internet: é só abrir o index.html.
+
+===== FIM =====

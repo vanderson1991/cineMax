@@ -1,0 +1,161 @@
+============================================================
+  PROJETO CINEMAX TV — RESUMO COMPLETO / CONTINUAÇÃO
+  (cole tudo abaixo em uma conversa nova para retomar)
+============================================================
+PALAVRA-CHAVE:  ProjetinhoTv
+SINAL DE CONTINUAÇÃO: se o usuário disser "vamos continuar" ou
+colar este bloco, retomar o projeto CineMax TV de onde parou.
+
+------------------------------------------------------------
+1) O QUE É O PROJETO
+------------------------------------------------------------
+- App de TV gratuito "CineMax TV" (HTML/JS) para Smart TV
+  Android/Google TV. Canvas base 1280x720 que se auto-ajusta.
+- Navegação por controle remoto (setas + Enter + Esc).
+- Perfis de usuário locais (máx. 6), salvos em localStorage,
+  cada um com nome + avatar (ícone).
+- Catálogo com 23 capas (pôsteres reais) em carrossel.
+- 67 avatares recortados de mosaicos fornecidos pelo usuário.
+- Cor da marca: roxa #8b5cf6 (variável CSS --orange).
+- Perfil do usuário GRANDE no topo (avatar ~84px + nome ~32px).
+- Capas lado a lado (gap ~6px), proporção 2:3.
+- Splash de abertura: logo ▶ roxo, tagline "FILMES FREE",
+  som via Web Audio tocando no pico (~1,15s), some ~2,35s.
+
+------------------------------------------------------------
+2) FORMA DE ENTREGA / DISPOSITIVOS
+------------------------------------------------------------
+- Entregue como HTML/JS (index.html) E como APK Android
+  (.apk com WebView, LEANBACK_LAUNCHER, botão voltar = Esc).
+- TV alvo: TCL com Google TV / Android TV (confirmado, NÃO Roku).
+- Instalação por sideload (pen drive / Send Files to TV /
+  Google Drive + Downloader).
+- Usuário guarda os arquivos na pasta "ProjetinhoTv" no celular.
+
+------------------------------------------------------------
+3) PROBLEMA ATUAL (O QUE ESTAVA FAZENDO / ONDE PAROU)
+------------------------------------------------------------
+PROBLEMA ATIVO: corte/overscan das bordas na TV TCL.
+- O app estava renderizando grande demais e cortando as bordas
+  (título "A Casa do Dragão" aparecia como "...isa do Dragão").
+- Causa 1 (WebView): removido setUseWideViewPort +
+  setLoadWithOverviewMode do MainActivity.java (v2.2).
+- Causa 2 (TV overscan): adicionada MARGEM de segurança no fit():
+  scale multiplicado por 0.90 (v2.3) → depois ajustado para
+  0.84 (v2.4 em andamento) porque o usuário pediu para DIMINUIR
+  mais um pouco ("quase bom, acho que tem que diminuir").
+- ESTADO ATUAL: index.html tem fit() com *0.84.
+- PENDENTE: testar se 0.84 resolve o corte da esquerda
+  ("Continua assistindo" ainda cortava). Se precisar, usar um
+  valor menor (ex: 0.80) ou maior (0.86).
+
+COMO AJUSTAR A MARGEM (se precisar de novo):
+  No arquivo index.html, procure a função fit() e mude o
+  fator:  var s=Math.min(w/1280,h/720)*0.84;
+  Menor fator = app menor (mais borda preta, menos corte).
+  Maior fator = app maior (mais corte nas bordas).
+
+------------------------------------------------------------
+4) PENDÊNCIA: CORRIGIR TÍTULOS DAS CAPAS
+------------------------------------------------------------
+- Os títulos das capas NÃO batem com os pôsteres reais.
+  Ex.: pôster "O Corvo" está rotulado "Succession".
+- Títulos reais JÁ identificados (nos 5 primeiros pôsteres):
+   capa0 (18335a8f) = ROSARIO
+   capa1 (266cbaf8) = O CORVO
+   capa2 (3253c18c) = IMPLACÁVEL
+   capa3 (48adcb30) = A PROFECIA DO MAL
+   capa4 (4967d200) = VAI QUE COLA - O Filme
+- PENDENTE: identificar os outros 18 pôsteres (capas 5 a 22)
+  usando a ferramenta de análise de imagem (analyze_image,
+  em grupos de 5) e corrigir o array "catalog" no index.html.
+- OBS: essa análise consome CRÉDITOS. Se der erro
+  "INSUFFICIENT_CREDITS", avisar o usuário para recarregar.
+
+------------------------------------------------------------
+5) COMANDOS DE BUILD DO APK (exatos, usados neste projeto)
+------------------------------------------------------------
+# Pré-requisitos (uma vez):
+sudo apt-get update && sudo apt-get install -y openjdk-17-jdk-headless
+export ANDROID_HOME=/home/user/android-sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+# Baixar SDK (uma vez):
+cd /home/user/android-sdk/cmdline-tools
+curl -fsSL -o clt.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+unzip -q clt.zip && mv cmdline-tools latest && rm clt.zip
+yes | sdkmanager --licenses
+sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+export BT=$ANDROID_HOME/build-tools/34.0.0
+export PLATFORM=$ANDROID_HOME/platforms/android-34/android.jar
+
+# Build (a cada compilação):
+cd /home/user/apkbuild && PROJ=Cine-2024-APK
+mkdir -p out/res out/gen out/classes
+$BT/aapt2 compile --dir $PROJ/app/src/main/res -o out/res
+$BT/aapt2 link -o out/app-unsigned.apk -I $PLATFORM \
+  --manifest $PROJ/app/src/main/AndroidManifest.xml \
+  -A $PROJ/app/src/main/assets --java out/gen \
+  $(find out/res -name '*.flat') \
+  --min-sdk-version 21 --target-sdk-version 34
+find $PROJ/app/src/main/java out/gen -name '*.java' > out/sources.txt
+javac -encoding UTF-8 -source 8 -target 8 -classpath $PLATFORM -d out/classes @out/sources.txt
+jar cf out/classes.jar -C out/classes .
+$BT/d8 --release --lib $PLATFORM --output out/ out/classes.jar
+cp out/app-unsigned.apk out/app-withdex.apk
+cd out && zip -q app-withdex.apk classes.dex && cd ..
+$BT/zipalign -f 4 out/app-withdex.apk out/app-aligned.apk
+# ASSINAR com a MESMA keystore (para ser atualização, não desinstalar):
+keytool -genkeypair -keystore /home/user/apkbuild/cinemax.keystore -alias cinemax \
+  -keyalg RSA -keysize 2048 -validity 10000 -storepass cinemax123 -keypass cinemax123 \
+  -dname "CN=CineMax TV, OU=CineMax, O=CineMax, L=BR, ST=BR, C=BR"   # (só 1ª vez)
+$BT/apksigner sign --ks /home/user/apkbuild/cinemax.keystore \
+  --ks-pass pass:cinemax123 --ks-key-alias cinemax --key-pass pass:cinemax123 \
+  --out out/CineMaxTV.apk out/app-aligned.apk
+
+NOTAS de build:
+- Manifesto precisa de package="br.com.cinemax.tv" (senão aapt2 falha).
+- Java precisa de -encoding UTF-8 (tem acentos nos comentários).
+- A MESMA keystore garante UPDATE por cima (mantém perfis).
+- Publicar: copiar para /tmp/creao-artifacts/ e usar publish_artifact.
+
+------------------------------------------------------------
+6) LINKS DE DOWNLOAD (para a TV / para compartilhar)
+------------------------------------------------------------
+Link PÚBLICO temporário (tmpfiles) — EXPIRA, gere novo se preciso:
+- Página: https://tmpfiles.org/wWwOBqPrL4tu/cinemaxtv.apk
+- Direto: https://tmpfiles.org/dl/1788063042.dfaf01defa6e31bd/wWwOBqPrL4tu/cinemaxtv.apk
+- Este é o APK v2.4 (margem 0.84). Link anterior (v2.3/0.90) era https://tmpfiles.org/dl/1788056210.6602befab2216c2e/wrwwBfmGlBv6/cinemaxtv-v2.apk
+Como gerar novo link público:
+  curl -s -X POST -F "file=@APK.apk" https://tmpfiles.org/api/v1/upload
+  depois abrir a página para achar o link direto .../dl/...
+Card de download no chat = o arquivo CineMaxTV-v2.apk (card).
+
+------------------------------------------------------------
+7) ARQUIVOS DESTE PACOTE (dentro do zip)
+------------------------------------------------------------
+- index.html (app completo, JS válido)
+- capas/ (pôsteres reais) e avatares/ (ícones)
+- Cine-2024-APK/ (projeto Android Studio WebView completo)
+- CineMaxTV.apk / CineMaxTV-v2.apk (APKs compilados)
+- previews/ (imagens de visualização das telas)
+- REABRIR_PROJETO.txt (decisões da marca)
+- BLOCO-CONTINUAR-ProjetinhoTv.txt (bloco de retomada)
+- ESTE ARQUIVO: RESUMO-COMPLETO.txt
+
+------------------------------------------------------------
+8) COMO RETOMAR (instrução para o agente)
+------------------------------------------------------------
+Quando o usuário disser "vamos continuar" ou colar o bloco
+ProjetinhoTv:
+1) Leia index.html e identifique o valor atual de fit().
+2) Confirme onde parou: ajuste de margem (corte de borda) na TV,
+   e a pendência dos títulos das capas.
+3) Pergunte/ajude a: (a) testar 0.84 ou afinar a margem;
+   (b) continuar corrigindo os títulos das capas.
+4) Qualquer mudança no app => rebuild + ASSINAR com a mesma
+   keystore + gerar link público novo + mandar o download.
+5) Sempre oferecer um card de download .apk atualizado.
+
+FIM DO RESUMO
+============================================================

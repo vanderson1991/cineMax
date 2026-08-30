@@ -1,0 +1,117 @@
+============================================================
+  PROJETO CINEMAX TV  —  BLOCO DE CONTINUAÇÃO (resume)
+============================================================
+(Quando você colar este bloco numa conversa nova, quem ler
+saberá imediatamente de que projeto se trata.)
+
+PALAVRA-CHAVE:  ProjetinhoTv
+IDENTIFICAÇÃO:  App de TV gratuito "CineMax TV" (HTML/JS),
+                base 1280x720 que auto-ajusta para qualquer
+                Smart TV / Android TV, com navegação por
+                controle remoto (setas + Enter + Esc).
+
+------------------------------------------------------------
+1) O QUE É / ESTADO ATUAL
+------------------------------------------------------------
+- App CineMax TV: HTML/JS responsivo para Smart TV.
+- Perfis de usuário locais (criar/editar/apagar, máx 6),
+  salvos em localStorage, cada um com nome + avatar.
+- Catálogo: 23 capas (retrato 2:3) em carrossel horizontal.
+- 67 avatares de perfil (recortados de 3 mosaicos enviados)
+  + 3 originais.
+- Cor da marca: roxa #8b5cf6 (variável CSS --orange).
+- Perfil do usuário GRANDE no topo (avatar ~84px + nome ~32px).
+- Capas lado a lado (gap ~6px), proporção 2:3 preservada.
+- Splash de abertura: logo ▶ roxo, "CineMax"+"TV", tagline
+  "FILMES FREE", animação zoom+rotação+fade+anel pulsante,
+  some suave após ~2,35s.
+- Som no splash via Web Audio (sintetizado, sem .mp3):
+  toca no PICO do logo (~1,15s), notas 880Hz->1318,5Hz.
+
+------------------------------------------------------------
+2) ARQUIVOS / PASTAS
+------------------------------------------------------------
+Projeto na workspace files/:
+  index.html                     -> o app completo
+  capas/ (23 .jpg)               -> pôsteres (catálogo)
+  avatares/ (67 png + 3 originais)
+  previews/ (preview_home, _profiles, _catalog, _splash, _tv)
+  REABRIR_PROJETO.txt -> resumo de decisões/marca
+  ProjetinhoTv.zip    -> pacote completo (app+capas+avatares)
+  Cine-2024-APK/      -> projeto Android Studio (WebView)
+  CineMaxTV-APK-projeto.zip -> projeto APK empacotado
+  CineMaxTV.apk       -> APK JÁ COMPILADO e assinado
+  REB-APK.txt (em Cine-2024-APK) -> guia de build
+
+  Caminho base (em cada chat muda o id):
+  /home/user/workspaces/<id>/files/
+
+------------------------------------------------------------
+3) COMO GERAR O .apk (comandos exatos usados)
+------------------------------------------------------------
+# Pré-requisitos (1x)
+sudo apt-get update && sudo apt-get install -y openjdk-17-jdk-headless
+export ANDROID_HOME=/home/user/android-sdk
+export ANDROID_SDK_ROOT=$ANDROID_HOME
+export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+
+# Baixar SDK tools + plataforma + build-tools (1x)
+cd /home/user/android-sdk/cmdline-tools
+curl -fsSL -o clt.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+unzip -q clt.zip && mv cmdline-tools latest && rm clt.zip
+yes | sdkmanager --licenses
+sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+export BT=$ANDROID_HOME/build-tools/34.0.0
+export PLATFORM=$ANDROID_HOME/platforms/android-34/android.jar
+
+# Build (a cada compilação)
+cd /home/user/apkbuild && PROJ=Cine-2024-APK
+mkdir -p out/res out/gen out/classes
+$BT/aapt2 compile --dir $PROJ/app/src/main/res -o out/res
+$BT/aapt2 link -o out/app-unsigned.apk -I $PLATFORM \
+  --manifest $PROJ/app/src/main/AndroidManifest.xml \
+  -A $PROJ/app/src/main/assets --java out/gen \
+  $(find out/res -name '*.flat') \
+  --min-sdk-version 21 --target-sdk-version 34
+find $PROJ/app/src/main/java out/gen -name '*.java' > out/sources.txt
+javac -encoding UTF-8 -source 8 -target 8 -classpath $PLATFORM -d out/classes @out/sources.txt
+jar cf out/classes.jar -C out/classes .
+$BT/d8 --release --lib $PLATFORM --output out/ out/classes.jar
+cp out/app-unsigned.apk out/app-withdex.apk
+cd out && zip -q app-withdex.apk classes.dex && cd ..
+$BT/zipalign -f 4 out/app-withdex.apk out/app-aligned.apk
+keytool -genkeypair -keystore /home/user/apkbuild/cinemax.keystore \
+  -alias cinemax -keyalg RSA -keysize 2048 -validity 10000 \
+  -storepass cinemax123 -keypass cinemax123 \
+  -dname "CN=CineMax TV, OU=CineMax, O=CineMax, L=BR, ST=BR, C=BR"
+$BT/apksigner sign --ks /home/user/apkbuild/cinemax.keystore \
+  --ks-pass pass:cinemax123 --ks-key-alias cinemax --key-pass pass:cinemax123 \
+  --out out/CineMaxTV.apk out/app-aligned.apk
+# Publicar: copy para /tmp/creao-artifacts e usar publish_artifact.
+
+OBS: se o manifest não tiver package, aapt2 exige
+  package="br.com.cinemax.tv" no <manifest>.
+
+------------------------------------------------------------
+4) COMO REABRIR/COMANDOS-CHAVE DE USO
+------------------------------------------------------------
+- "reabra o projeto CineMax TV da pasta ProjetinhoTv"
+- "recompile o APK" -> usar os comandos da seção 3.
+- Para mudar conteúdo: edite index.html / capas / avatares
+  dentro de Cine-2024-APK/app/src/main/assets/www/ e recompile.
+- Publicar arquivo binário: escrever em /tmp/creao-artifacts e
+  chamar a ferramenta publish_artifact.
+
+------------------------------------------------------------
+5) DECISÕES DE MARCA (resumo rápido)
+------------------------------------------------------------
+- Roxo #8b5cf6 · gradiente logo #a78bfa->#7c3aed
+- Nome do app: CineMax TV
+- Tagline splash: "FILMES FREE"
+- Ícone: quadrado roxo com play ▶
+- Perfil no topo: avatar ~84px, nome ~32px negrito
+
+============================================================
+FIM DO BLOCO
+============================================================

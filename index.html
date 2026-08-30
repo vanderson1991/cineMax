@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineMax TV</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{--orange:#8b5cf6;--orange-hi:#a78bfa;--bg:#0b0d12;--card:#1d2028;--text:#f2f3f5;--sub:#b8bdc9;--line:rgba(255,255,255,.08);}
+  html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Segoe UI',Roboto,Arial,sans-serif;color:var(--text);}
+  #stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;will-change:transform;background:radial-gradient(1200px 700px at 50% -10%,#1a1d26 0%,#0b0d12 70%);overflow:hidden;}
+  .screen{position:absolute;inset:0;display:none;}
+  .screen.active{display:block;}
+  .focusable{outline:none;transition:transform .1s ease,border-color .1s;}
+  .focusable:focus{border-color:var(--orange)!important;transform:scale(1.04);box-shadow:0 0 0 3px rgba(139,92,246,.45);}
+  .logo-box{width:52px;height:52px;border-radius:13px;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;box-shadow:0 6px 18px rgba(139,92,246,.45);}
+  .brand-text{font-size:34px;font-weight:800;letter-spacing:.5px;color:#fff;}
+  .brand-text span{color:var(--orange);}
+  #screenProfiles{background:linear-gradient(180deg,#0c0e13,#08090d);}
+  #screenProfiles .wrap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:16px;}
+  .head-sub{color:var(--sub);font-size:22px;text-align:center;letter-spacing:.5px;}
+  .brand-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;}
+  /* Splash */
+  #splash{position:absolute;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(1100px 640px at 50% 22%,#1c1f2a,#0b0d12 76%);transition:opacity .5s;}
+  #splash.hide{opacity:0;pointer-events:none;}
+  .splash-logo-wrap{position:relative;width:118px;height:118px;}
+  .splash-glow{position:absolute;left:50%;top:50%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;border:3px solid rgba(139,92,246,.65);animation:glow 1.6s ease-out infinite;}
+  .splash-logo{position:relative;width:118px;height:118px;border-radius:30px;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:60px;font-weight:800;color:#fff;box-shadow:0 0 70px rgba(139,92,246,.65);animation:logoIn 1.1s cubic-bezier(.2,.9,.3,1.15) forwards;}
+  .splash-brand{font-size:86px;font-weight:900;letter-spacing:2px;color:#fff;margin-top:26px;opacity:0;animation:fadeUp .8s .25s ease forwards;}
+  .splash-brand span{color:var(--orange);text-shadow:0 0 34px rgba(139,92,246,.7);}
+  .splash-tag{font-size:22px;color:#b9bfcb;margin-top:8px;letter-spacing:6px;text-transform:uppercase;opacity:0;animation:fadeUp .8s .45s ease forwards;}
+  .splash-bar{width:280px;height:7px;border-radius:7px;background:#2a2e3a;margin-top:42px;overflow:hidden;opacity:0;animation:fadeUp .6s .6s ease forwards;}
+  .splash-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a78bfa,#7c3aed);border-radius:7px;animation:load 1.2s ease forwards;}
+  @keyframes logoIn{0%{transform:scale(.2) rotate(-45deg);opacity:0;}55%{transform:scale(1.15) rotate(10deg);opacity:1;}75%{transform:scale(.95) rotate(-3deg);}100%{transform:scale(1) rotate(0);opacity:1;}}
+  @keyframes glow{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(1.4);opacity:0;}}
+  @keyframes fadeUp{0%{transform:translateY(22px);opacity:0;}100%{transform:translateY(0);opacity:1;}}
+  @keyframes load{to{width:100%;}}
+  .profile-grid{display:flex;flex-wrap:wrap;gap:30px 40px;justify-content:center;max-width:1120px;}
+  .profile-tile{width:200px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;cursor:pointer;padding-top:4px;}
+  .profile-avatar{width:184px;height:184px;border-radius:50%;background-size:cover;background-position:center;border:5px solid transparent;flex:0 0 auto;background-color:#1d2128;}
+  .profile-name{width:100%;margin-top:20px;font-size:25px;font-weight:700;color:#e9eaee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .profile-hint{margin-top:8px;font-size:16px;color:var(--sub);letter-spacing:.3px;}
+  .add-tile .profile-avatar{display:flex;align-items:center;justify-content:center;font-size:66px;color:var(--sub);background:rgba(255,255,255,.07);}
+  .manage-bar{display:flex;gap:18px;margin-top:8px;}
+  .btn{display:flex;align-items:center;gap:12px;padding:16px 34px;border-radius:10px;background:var(--card);border:3px solid transparent;font-size:21px;font-weight:700;color:#fff;cursor:pointer;user-select:none;}
+  .btn.primary{background:var(--orange);}
+  .btn.ghost{background:rgba(255,255,255,.10);}
+  .btn.danger{background:#d0342c;}
+  #screenHome{background:var(--bg);}
+  .nav{position:absolute;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:20px 44px;background:linear-gradient(180deg,rgba(0,0,0,.72),transparent);}
+  .nav-left{display:flex;align-items:center;gap:40px;}
+  .nav-links{display:flex;gap:8px;align-items:center;}
+  .nav-link{padding:8px 16px;font-size:19px;font-weight:600;color:#eef0f5;border-radius:6px;cursor:pointer;text-shadow:0 1px 2px rgba(0,0,0,.8);}
+  .nav-link.active{color:var(--orange);font-weight:800;}
+  .nav-profile{display:flex;align-items:center;gap:14px;cursor:pointer;padding:6px 10px;border-radius:34px;border:3px solid transparent;}
+  .nav-profile .avatar{width:84px;height:84px;border-radius:50%;background-size:cover;background-position:center;border:3px solid var(--orange);}
+  #navProfileName{font-size:32px;font-weight:800;letter-spacing:.5px;}
+  .hero{position:relative;width:100%;height:420px;}
+  .hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 18%;}
+  .hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,13,18,.98) 0%,rgba(11,13,18,.55) 45%,rgba(11,13,18,.1) 72%),linear-gradient(0deg,#0b0d12 0%,transparent 42%);}
+  .hero-content{position:relative;z-index:5;display:flex;flex-direction:column;justify-content:flex-end;height:100%;padding:0 60px 34px;}
+  .hero-title{font-size:66px;font-weight:900;line-height:1.02;max-width:640px;text-shadow:0 4px 24px rgba(0,0,0,.7);}
+  .hero-meta{display:flex;align-items:center;gap:16px;margin:16px 0 24px;color:#eef1f7;font-size:20px;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.85);}
+  .hero-actions{display:flex;gap:20px;}
+  .content-rows{position:absolute;top:420px;left:0;right:0;bottom:0;overflow:hidden;padding:22px 0 0;}
+  .row{margin-bottom:34px;content-visibility:auto;contain-intrinsic-size:auto 420px;}
+  .row-title{font-size:26px;font-weight:800;padding:0 44px;margin-bottom:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7);}
+  .row-track{display:flex;gap:6px;padding:6px 44px;overflow-x:hidden;}
+  .card{flex:0 0 auto;width:176px;cursor:pointer;border-radius:12px;overflow:hidden;position:relative;border:3px solid transparent;}
+  .card img{width:100%;aspect-ratio:2/3;object-fit:cover;object-position:center;display:block;background:#111;}
+  .card-title{position:absolute;left:0;right:0;bottom:0;padding:30px 10px 8px;background:linear-gradient(0deg,rgba(0,0,0,.95),transparent);font-size:16px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.95);}
+  .modal-layer{position:absolute;inset:0;z-index:80;display:none;background:rgba(0,0,0,.82);}
+  .modal-layer.active{display:flex;align-items:center;justify-content:center;}
+  .modal{width:660px;background:#16181f;border:1px solid var(--line);border-radius:18px;padding:32px;box-shadow:0 30px 70px rgba(0,0,0,.7);}
+  .modal h2{font-size:30px;margin-bottom:6px;}
+  .modal .desc{color:var(--sub);font-size:18px;margin-bottom:22px;}
+  .field{margin-bottom:20px;}
+  .field label{display:block;font-size:14px;color:var(--sub);margin-bottom:8px;text-transform:uppercase;letter-spacing:.6px;}
+  .name-input{width:100%;padding:15px 18px;font-size:22px;border-radius:10px;background:#0f1116;color:#fff;border:3px solid transparent;outline:none;}
+  .name-input:focus{border-color:var(--orange);}
+  .icon-picker{display:flex;flex-wrap:wrap;gap:12px;max-height:230px;overflow-y:auto;padding:4px;}
+  .icon-opt{width:92px;height:92px;border-radius:50%;background-size:cover;background-position:center;cursor:pointer;border:5px solid transparent;flex:0 0 auto;background-color:#222;content-visibility:auto;contain-intrinsic-size:92px 92px;}
+  .icon-opt.selected{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,106,0,.4);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:16px;margin-top:24px;}
+  .modal-actions .spacer{margin-right:auto;}
+  .toast{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:13px 26px;border-radius:30px;font-size:18px;font-weight:600;z-index:120;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .toast.show{opacity:1;}
+  #versionTag{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:17px;font-weight:800;color:#ffd54a;z-index:60;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;background:rgba(0,0,0,.55);padding:6px 16px;border-radius:9px;}
+  .detail-media{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin-bottom:18px;}
+  .detail-media img{width:100%;height:100%;object-fit:cover;display:block;}
+  .detail-title{font-size:34px;margin-bottom:6px;}
+  .detail-meta{font-size:18px;color:var(--sub);margin-bottom:12px;}
+  .detail-desc{font-size:17px;color:#cfd3dc;line-height:1.5;margin-bottom:20px;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <!-- SPLASH -->
+  <div id="splash" class="splash">
+    <div class="splash-logo-wrap">
+      <div class="splash-glow"></div>
+      <div class="splash-logo">▶</div>
+    </div>
+    <div class="splash-brand">CineMax<span>TV</span></div>
+    <div class="splash-tag">Filmes Free</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.6.7</div>
+    <div class="splash-bar"><i></i></div>
+  </div>
+  <!-- PROFILES -->
+  <div id="screenProfiles" class="screen active">
+    <div class="wrap">
+      <div class="head-sub">
+        <div class="brand-row"><div class="logo-box">▶</div><div class="brand-text">CineMax<span>TV</span></div></div>
+        Quem está assistindo?
+      </div>
+      <div class="profile-grid" id="profileGrid"></div>
+      <div class="manage-bar">
+        <button class="btn ghost focusable" id="btnAddProfile" tabindex="0">＋ Adicionar perfil</button>
+        <button class="btn ghost focusable" id="btnEditMode" tabindex="0">Gerenciar perfis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screenHome" class="screen">
+    <div class="nav">
+      <div class="nav-left">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div class="logo-box" style="width:44px;height:44px;font-size:24px;border-radius:11px;">▶</div>
+          <div class="brand-text" style="font-size:26px;">CineMax<span>TV</span></div>
+        </div>
+        <div class="nav-links" id="navLinks">
+          <span class="nav-link active focusable" data-cat="home" tabindex="0">INÍCIO</span>
+          <span class="nav-link focusable" data-cat="filmes" tabindex="0">FILMES</span>
+          <span class="nav-link focusable" data-cat="series" tabindex="0">SÉRIES</span>
+          <span class="nav-link focusable" data-cat="minha" tabindex="0">MINHA LISTA</span>
+          <span class="nav-link focusable" data-cat="favoritos" tabindex="0">FAVORITOS</span>
+        </div>
+      </div>
+      <div class="nav-profile focusable" id="navProfile" tabindex="0">
+        <span id="navProfileName" style="font-size:32px;font-weight:800;">Perfil</span>
+        <div class="avatar" id="navProfileAvatar"></div>
+      </div>
+    </div>
+    <div class="hero" id="hero"></div>
+    <div class="content-rows" id="rows"></div>
+    <div id="versionTag">v2.6.7</div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal-layer" id="modalProfile">
+    <div class="modal">
+      <h2 id="modalProfileTitle">Novo perfil</h2>
+      <div class="desc">Escolha um nome e uma das imagens de perfil.</div>
+      <div class="field"><label>Nome do perfil</label>
+        <input class="name-input focusable" id="profileNameInput" type="text" maxlength="20" placeholder="Digite o nome"></div>
+      <div class="field"><label>Ícone</label><div class="icon-picker" id="profileIconPicker"></div></div>
+      <div class="modal-actions">
+        <button class="btn danger focusable" id="btnModalDelete" tabindex="0" style="display:none;">Apagar</button>
+        <div class="spacer"></div>
+        <button class="btn ghost focusable" id="btnModalCancel" tabindex="0">Cancelar</button>
+        <button class="btn primary focusable" id="btnModalSave" tabindex="0">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIRM DELETE -->
+  <div class="modal-layer" id="modalConfirm">
+    <div class="modal" style="width:500px;">
+      <h2>Apagar perfil?</h2>
+      <div class="desc" id="modalConfirmText">Esta ação não pode ser desfeita.</div>
+      <div class="modal-actions">
+        <button class="btn ghost focusable" id="btnConfirmCancel" tabindex="0">Cancelar</button>
+        <button class="btn danger focusable" id="btnConfirmYes" tabindex="0">Apagar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="modal-layer" id="modalDetail">
+    <div class="modal" style="width:820px;">
+      <div class="detail-media"><img id="detailPoster" alt=""></div>
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <div class="detail-meta" id="detailMeta"></div>
+      <div class="detail-desc" id="detailDesc"></div>
+      <div class="modal-actions">
+        <button class="btn ghost focusable" id="btnDetailFav" tabindex="0">★ Favorito</button>
+        <div class="spacer"></div>
+        <button class="btn ghost focusable" id="btnDetailClose" tabindex="0">Fechar</button>
+        <button class="btn primary focusable" id="btnDetailPlay" tabindex="0">▶ Assistir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+"use strict";
+/* ============ CONFIGURAÇÃO / VERSÃO ============ */
+/* COLE AQUI a URL onde o app estará hospedado (ex: https://seu-site.com/cinemax/)
+   Quando preenchida, o app avisa sozinho quando houver versão nova.
+   Manter vazio = modo offline (só dentro do APK, aviso manual). */
+var REMOTE_BASE='';
+var APP_VERSION='2.6.7';
+
+/* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
+var stage=document.getElementById('stage');
+function fit(){
+  var w=window.innerWidth||document.documentElement.clientWidth;
+  var h=window.innerHeight||document.documentElement.clientHeight;
+  if((!w||w<=10)&&window.screen){w=screen.width;}if((!h||h<=10)&&window.screen){h=screen.height;}
+  var s=Math.min(w/1280,h/720)*0.56;
+  stage.style.transform='translate(-50%,-50%) scale('+s+')';
+}
+window.addEventListener('resize',fit);fit();
+setTimeout(fit,300);window.addEventListener('load',fit);
+
+var CAPAS=[
+"18335a8f-c7e0-4a49-8c7d-3a93fecf32d8_m.jpg","266cbaf8-15c3-4a47-b81e-7776ae702ef8_m.jpg",
+"3253c18c-24b9-4262-a340-19a4899cceb4_m.jpg","48adcb30-22fd-4f22-ab1c-62f34148c273_m.jpg",
+"4967d200-5495-4fb7-a007-db2508b42cc2_m.jpg","4e46ecfa-351b-4492-9eed-8f074d2825e4_m.jpg",
+"5bb69992-1ea9-424f-bbdc-14ae7fb89fdf_m.jpg","63bd29b4-91e3-4bc4-86b3-92c5f4a4846f_m.jpg",
+"69f1d800-ff60-4687-9f0b-fd03faef87ee_m.jpg","6c3f7164-3d86-4a70-9f71-00940d94ddc8_m.jpg",
+"80d5657b-4e2d-46c5-8e46-c82efe6cb3c2_m.jpg","8995d442-c943-4945-af29-ca0c1c372a66_m.jpg",
+"9030fd55-c808-4765-ba1a-30d8970059c5_m.jpg","91dfba6b-f80e-4083-90c9-6ca88a202768_m.jpg",
+"c205bc80-2e72-455f-aa0b-8fca94bdf52f_m.jpg","c78d8546-4f6d-4d6c-9daf-ceced978cb69_m.jpg",
+"cdc04c6e-43d4-4d9a-a6c6-d44d2f1c3a71_m.jpg","d536dc70-5e53-46d0-82ce-31a314f542c3_m.jpg",
+"dc268dae-c072-4b55-bb81-008695dcc92b_m.jpg","f0a586e0-2132-4f2f-9f23-eb690598db57_m.jpg",
+"f165fd1e-86a8-42e5-b43e-6d1a10f8506d_m.jpg","febf8229-6e35-482e-98b0-d37f83ba87e9_m.jpg",
+"ff7f6ff8-698a-40a9-8e87-572d31339d1e_m.jpg"];
+function img(i){return 'capas/'+CAPAS[i%CAPAS.length];}
+
+/* ícones de perfil (recortados dos mosaicos enviados) */
+var AVATARS=["av1_01.png","av1_02.png","av1_03.png","av1_04.png","av1_05.png","av1_06.png","av1_07.png","av1_08.png","av1_09.png","av1_10.png","av1_11.png","av1_12.png","av1_13.png","av1_14.png","av1_15.png","av1_16.png","av1_17.png","av1_18.png","av1_19.png","av1_20.png","av1_21.png","av1_22.png","av1_23.png","av1_24.png","av1_25.png","av1_26.png","av1_27.png","av1_28.png","av2_01.png","av2_02.png","av2_03.png","av2_04.png","av2_05.png","av2_06.png","av2_07.png","av2_08.png","av2_09.png","av2_10.png","av2_11.png","av2_12.png","av2_13.png","av2_14.png","av2_15.png","av2_16.png","av2_17.png","av2_18.png","av2_19.png","av2_20.png","av2_21.png","av3_01.png","av3_02.png","av3_03.png","av3_04.png","av3_05.png","av3_06.png","av3_07.png","av3_08.png","av3_09.png","av3_10.png","av3_11.png","av3_12.png","av3_13.png","av3_14.png","av3_15.png","av3_16.png","av3_17.png","av3_18.png"];
+
+var catalog=[
+{id:0,t:"Rosario",cat:"Filmes",img:img(0),meta:"Suspense · Drama · 14+",desc:"Uma história de mistério, fé e segredos que prende do início ao fim."},
+{id:1,t:"O Corvo",cat:"Filmes",img:img(1),meta:"Ação · Fantasia · 16+",desc:"Um homem retorna dos mortos para fazer justiça."},
+{id:2,t:"Implacável",cat:"Filmes",img:img(2),meta:"Ação · 16+",desc:"A justiça nas próprias mãos, sem perdão."},
+{id:3,t:"A Profecia do Mal",cat:"Filmes",img:img(3),meta:"Terror · 18+",desc:"Um mal profundo começa a despertar."},
+{id:4,t:"Vai que Cola - O Filme",cat:"Filmes",img:img(4),meta:"Comédia · 12+",desc:"As confusões do pessoal mais querido do Brasil."},
+{id:5,t:"Exorcismo Sagrado",cat:"Filmes",img:img(5),meta:"Terror · 16+",desc:"Um padre em guerra contra o demônio."},
+{id:6,t:"Superhost",cat:"Filmes",img:img(6),meta:"Terror · 16+",desc:"Uma hospedagem que vira um pesadelo."},
+{id:7,t:"Vingadora",cat:"Filmes",img:img(7),meta:"Ação · 14+",desc:"Uma guardiã em defesa da justiça."},
+{id:8,t:"Terrifier 2",cat:"Filmes",img:img(8),meta:"Terror · 18+",desc:"O palhaço mais aterrorizante do cinema volta."},
+{id:9,t:"Rambo: Até o Fim",cat:"Filmes",img:img(9),meta:"Ação · 16+",desc:"A última batalha de Rambo para salvar quem ama."},
+{id:10,t:"Panda vs. Aliens",cat:"Filmes",img:img(10),meta:"Animação · Livre",desc:"Um panda contra uma invasão alienígena."},
+{id:11,t:"A Semente do Mal",cat:"Filmes",img:img(11),meta:"Terror · 16+",desc:"O mal cresce em silêncio."},
+{id:12,t:"Código Alarum",cat:"Filmes",img:img(12),meta:"Ação · 14+",desc:"Códigos, conspirações e adrenalina."},
+{id:13,t:"Blindado",cat:"Filmes",img:img(13),meta:"Ação · 14+",desc:"Uma perseguição implacável pelas ruas."},
+{id:14,t:"Serra das Almas",cat:"Filmes",img:img(14),meta:"Terror · 18+",desc:"Segredos sombrios escondidos na serra."},
+{id:15,t:"O Exorcismo",cat:"Filmes",img:img(15),meta:"Terror · 16+",desc:"O mal que entra em uma família."},
+{id:16,t:"Screamboat: Terror a Bordo",cat:"Filmes",img:img(16),meta:"Terror · 18+",desc:"Pânico e sangue em um cruzeiro."},
+{id:17,t:"O Rei da Feira",cat:"Filmes",img:img(17),meta:"Drama · 14+",desc:"A vida sob os holofotes da feira."},
+{id:18,t:"Zona de Risco",cat:"Filmes",img:img(18),meta:"Ação · 16+",desc:"Missão em território hostil."},
+{id:19,t:"As Aventuras de Robinson Crusoé",cat:"Filmes",img:img(19),meta:"Animação · Livre",desc:"A clássica aventura em uma ilha."},
+{id:20,t:"Big Pai, Big Filho",cat:"Filmes",img:img(20),meta:"Animação · Livre",desc:"Um garoto e seu pai gigante."},
+{id:21,t:"Não Abra!",cat:"Filmes",img:img(21),meta:"Terror · 16+",desc:"O que está dentro precisa sair."},
+{id:22,t:"Floresta Maldita",cat:"Filmes",img:img(22),meta:"Terror · 16+",desc:"Não entre na floresta."}];
+
+var rowsDef=[
+{title:"Continua assistindo",items:[0,1,2,3,4,5,6]},
+{title:"Filmes em destaque",items:[11,12,13,14,16,18,19,22]},
+{title:"Terror & Suspense",items:[3,5,6,8,11,14,15,16,21,22]},
+{title:"Ação",items:[1,2,7,9,12,13,18,20]},
+{title:"Animação & Família",items:[10,17,19,20]}];;
+
+/* ============ helpers ============ */
+function S(id){return document.getElementById(id);}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function toast(m){var t=S('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2200);}
+function showScreen(n){document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});S('screen'+n).classList.add('active');}
+
+/* ============ state ============ */
+var profiles=[];try{profiles=JSON.parse(localStorage.getItem('cinemax_profiles')||'[]');}catch(e){profiles=[];}
+function saveProfiles(){localStorage.setItem('cinemax_profiles',JSON.stringify(profiles));}
+var current=null,activeCat='home',editing=false,editingIdx=null,selIcon=null;
+
+/* ============ Profile screen ============ */
+function renderProfiles(){
+  var grid=S('profileGrid');grid.innerHTML='';
+  profiles.forEach(function(p,i){
+    var t=document.createElement('div');
+    t.className='profile-tile focusable';t.tabIndex=0;t.setAttribute('data-idx',i);
+    t.innerHTML='<div class="profile-avatar" style="background-image:url(\''+p.icon+'\')"></div>'+
+      '<div class="profile-name">'+esc(p.name)+'</div>'+
+      '<div class="profile-hint">'+(editing?'Editar / apagar':'Entrar')+'</div>';
+    grid.appendChild(t);
+  });
+  if(!editing){
+    var a=document.createElement('div');
+    a.className='profile-tile add-tile focusable';a.tabIndex=0;a.setAttribute('data-add','1');
+    a.innerHTML='<div class="profile-avatar">＋</div><div class="profile-name" style="color:#9aa0ad;">Adicionar</div><div class="profile-hint">&nbsp;</div>';
+    grid.appendChild(a);
+  }
+  S('btnEditMode').textContent=editing?'Concluir':'Gerenciar perfis';
+}
+function openProfileModal(idx){
+  editingIdx=(idx==null?null:idx);
+  S('modalProfileTitle').textContent=idx==null?'Novo perfil':'Editar perfil';
+  S('profileNameInput').value=idx!=null?profiles[idx].name:'';
+  selIcon=idx!=null?profiles[idx].icon:null;
+  S('btnModalDelete').style.display=idx==null?'none':'block';
+  renderIcons();
+  S('modalProfile').classList.add('active');
+  S('profileNameInput').focus();
+}
+function renderIcons(){
+  var p=S('profileIconPicker');p.innerHTML='';
+  AVATARS.forEach(function(c){
+    var o=document.createElement('div');
+    o.className='icon-opt focusable';o.tabIndex=0;o.setAttribute('data-icon','avatars/'+c);
+    o.style.backgroundSize="cover";o.style.backgroundPosition="center";o.style.backgroundColor="#222";
+    o.innerHTML='<img loading="lazy" decoding="async" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;" src="avatars/'+c+'">';
+    if(selIcon==='avatars/'+c)o.classList.add('selected');
+    p.appendChild(o);
+  });
+}
+function saveProfileForm(){
+  var name=S('profileNameInput').value.trim();
+  if(!name)return toast('Digite o nome do perfil.');
+  if(!selIcon)return toast('Escolha um ícone.');
+  if(editingIdx!=null){profiles[editingIdx].name=name;profiles[editingIdx].icon=selIcon;toast('Perfil atualizado!');}
+  else{if(profiles.length>=6)return toast('Máximo de 6 perfis.');profiles.push({name:name,icon:selIcon});toast('Perfil criado!');}
+  saveProfiles();S('modalProfile').classList.remove('active');editingIdx=null;renderProfiles();
+}
+function confirmDelete(){
+  if(editingIdx==null)return;
+  S('modalConfirmText').textContent='Apagar o perfil "'+profiles[editingIdx].name+'"?';
+  S('modalConfirm').classList.add('active');S('btnConfirmYes').focus();
+}
+function doDelete(){
+  if(editingIdx!=null){profiles.splice(editingIdx,1);toast('Perfil apagado.');}
+  saveProfiles();S('modalConfirm').classList.remove('active');S('modalProfile').classList.remove('active');
+  editingIdx=null;renderProfiles();
+}
+function enterProfile(i){
+  current=profiles[i];activeCat='home';
+  document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-cat')==='home');});
+  showScreen('Home');renderHome();
+  var first=document.querySelector('#screenHome .nav-link');if(first)first.focus();
+}
+function toggleEdit(){editing=!editing;renderProfiles();}
+
+/* ============ Home ============ */
+function renderHome(){
+  if(current){
+    S('navProfileName').textContent=current.name;
+    S('navProfileAvatar').style.backgroundImage="url('"+current.icon+"')";
+  }
+  var it=catalog[0];
+  var h=S('hero');
+  h.innerHTML='<div class="hero-bg" style="background-image:url(\''+it.img+'\')"></div>'+
+    '<div class="hero-shade"></div>'+
+    '<div class="hero-content">'+
+      '<div class="hero-title">'+esc(it.t)+'</div>'+
+      '<div class="hero-meta">'+esc(it.meta)+'</div>'+
+      '<div class="hero-actions">'+
+        '<button class="btn primary focusable" data-play="'+it.id+'" tabindex="0">▶ Assistir</button>'+
+        '<button class="btn ghost focusable" data-mylist="'+it.id+'" tabindex="0">＋ Minha lista</button>'+
+        '<button class="btn ghost focusable" data-fav="'+it.id+'" tabindex="0">★ Favorito</button>'+
+      '</div>'+
+    '</div>';
+  renderRows();
+}
+function currentRows(){
+  if(activeCat==='home')return rowsDef;
+  if(activeCat==='minha'){var l=current?current.list||[]:[];return [{title:'Minha lista',items:l}];}
+  if(activeCat==='favoritos'){var l=current?current.favs||[]:[];return [{title:'Favoritos',items:l}];}
+  var c=activeCat==='filmes'?'Filmes':'series';
+  return [{title:activeCat.toUpperCase(),items:catalog.filter(function(x){return x.cat===c;}).map(function(x){return x.id;})}];
+}
+function renderRows(){
+  var w=S('rows');
+  var frag=document.createDocumentFragment();
+  currentRows().forEach(function(r){
+    var row=document.createElement('div');row.className='row';
+    row.innerHTML='<div class="row-title">'+esc(r.title)+'</div><div class="row-track"></div>';
+    var tr=row.querySelector('.row-track');
+    r.items.forEach(function(id){
+      if(!catalog[id])return;
+      var c=catalog[id];
+      var card=document.createElement('div');card.className='card focusable';card.tabIndex=0;card.setAttribute('data-id',id);
+      card.innerHTML='<img loading="lazy" decoding="async" src="'+c.img+'" alt=""><div class="card-title">'+esc(c.t)+'</div>';
+      tr.appendChild(card);
+    });
+    frag.appendChild(row);
+  });
+  w.innerHTML='';
+  w.appendChild(frag);
+}
+function setNav(cat){activeCat=cat;document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-cat')===cat);});renderRows();}
+var detailId=null;
+function openDetail(id){
+  var it=catalog[id];if(!it)return;
+  detailId=id;
+  S('detailTitle').textContent=it.t;S('detailMeta').textContent=it.meta;S('detailDesc').textContent=it.desc;
+  S('detailPoster').src=it.img;S('modalDetail').classList.add('active');S('btnDetailPlay').focus();
+}
+function toggleMyList(id){
+  if(!current)return;
+  if(!current.list)current.list=[];
+  var i=current.list.indexOf(id);
+  if(i>=0){current.list.splice(i,1);toast('Removido da Minha lista.');}
+  else{current.list.push(id);toast('Adicionado à Minha lista.');}
+  saveProfiles();renderRows();
+}
+function toggleFav(id){
+  if(!current)return;
+  if(!current.favs)current.favs=[];
+  var i=current.favs.indexOf(id);
+  if(i>=0){current.favs.splice(i,1);toast('Removido dos Favoritos.');}
+  else{current.favs.push(id);toast('Adicionado aos Favoritos.');}
+  saveProfiles();renderRows();
+}
+
+/* ============ Keyboard / D-pad navigation ============ */
+function getFocusables(screen){
+  return Array.prototype.slice.call(screen.querySelectorAll('.focusable')).filter(function(e){
+    var r=e.getBoundingClientRect();return r.width>0&&r.height>0;
+  });
+}
+/* cache de posições do foco (evita getBoundingClientRect em toda tecla) */
+var _fc={t:0,box:null,items:[],rc:[]};
+function _fcSync(box){
+  var now=Date.now();
+  if(_fc.box===box&&now-_fc.t<250)return;
+  _fc.box=box;_fc.t=now;
+  _fc.items=getFocusables(box);
+  _fc.rc=_fc.items.map(function(e){var r=e.getBoundingClientRect();return {l:r.left,t:r.top,w:r.width,h:r.height};});
+}
+document.addEventListener('scroll',function(){_fc.t=0;},{capture:true,passive:true});
+function moveFocus(dir){
+  var scr=document.querySelector('.screen.active');
+  var modal=document.querySelector('.modal-layer.active');
+  var box=modal||scr;
+  _fcSync(box);
+  var items=_fc.items;if(!items.length)return;
+  var idx=items.indexOf(document.activeElement);if(idx<0)idx=0;
+  var c=_fc.rc[idx];if(!c)return;
+  var cx=c.l+c.w/2,cy=c.t+c.h/2;
+  var best=null,bd=Infinity,i,cc,x,y,dx,dy,ok,dist;
+  for(i=0;i<items.length;i++){
+    if(i===idx)continue;
+    cc=_fc.rc[i];x=cc.l+cc.w/2;y=cc.t+cc.h/2;dx=x-cx;dy=y-cy;
+    ok=false;
+    if(dir==='left')ok=dx<-5&&Math.abs(dy)<90;
+    else if(dir==='right')ok=dx>5&&Math.abs(dy)<90;
+    else if(dir==='up')ok=dy<-5&&Math.abs(dx)<250;
+    else if(dir==='down')ok=dy>5&&Math.abs(dx)<250;
+    if(!ok)continue;
+    dist=Math.hypot(dx,dy);if(dist<bd){bd=dist;best=items[i];}
+  }
+  if(best)best.focus();
+}
+function selectIcon(icon){
+  selIcon=icon;
+  document.querySelectorAll('#profileIconPicker .icon-opt').forEach(function(x){x.classList.remove('selected');});
+  document.querySelectorAll('#profileIconPicker .icon-opt').forEach(function(x){if(x.getAttribute('data-icon')===icon)x.classList.add('selected');});
+}
+function activate(elm,box){
+  if(!elm)return;
+  if(elm.classList&&elm.classList.contains('icon-opt')){selectIcon(elm.getAttribute('data-icon'));return;}
+  if(box.id==='screenProfiles'){
+    if(elm.hasAttribute('data-add')){openProfileModal(null);return;}
+    if(elm.hasAttribute('data-idx')){var i=+elm.getAttribute('data-idx');if(editing)openProfileModal(i);else enterProfile(i);return;}
+  }
+  if(box.id==='screenHome'){
+    if(elm.classList.contains('nav-link')){setNav(elm.getAttribute('data-cat'));return;}
+    if(elm.id==='navProfile'){showScreen('Profiles');return;}
+    if(elm.classList.contains('card')){openDetail(+elm.getAttribute('data-id'));return;}
+    if(elm.hasAttribute('data-play')){openDetail(+elm.getAttribute('data-play'));return;}
+    if(elm.hasAttribute('data-mylist')){toggleMyList(+elm.getAttribute('data-mylist'));return;}
+    if(elm.hasAttribute('data-fav')){toggleFav(+elm.getAttribute('data-fav'));return;}
+  }
+  if(elm.id==='btnAddProfile')openProfileModal(null);
+  else if(elm.id==='btnEditMode')toggleEdit();
+  else if(elm.id==='btnModalCancel'){S('modalProfile').classList.remove('active');editingIdx=null;}
+  else if(elm.id==='btnModalSave')saveProfileForm();
+  else if(elm.id==='btnModalDelete')confirmDelete();
+  else if(elm.id==='btnConfirmCancel')S('modalConfirm').classList.remove('active');
+  else if(elm.id==='btnConfirmYes')doDelete();
+  else if(elm.id==='btnDetailClose')S('modalDetail').classList.remove('active');
+  else if(elm.id==='btnDetailFav')toggleFav(detailId);
+  else if(elm.id==='btnDetailPlay')toast('Reproduzindo: '+S('detailTitle').textContent);
+}
+
+document.addEventListener('keydown',function(e){
+  var scr=document.querySelector('.screen.active');
+  var modal=document.querySelector('.modal-layer.active');
+  var box=modal||scr;
+  if(e.key==='Escape'){
+    if(modal)modal.classList.remove('active');
+    else if(scr.id==='screenHome')showScreen('Profiles');
+    return;
+  }
+  if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
+    e.preventDefault();moveFocus(e.key.replace('Arrow','').toLowerCase());return;
+  }
+  if(e.key==='Enter'){e.preventDefault();activate(document.activeElement,box);return;}
+  if(e.key==='Backspace'&&!modal&&scr.id==='screenHome'){showScreen('Profiles');return;}
+});
+
+/* ============ Click + icon picker delegation ============ */
+S('profileGrid').addEventListener('click',function(e){
+  var t=e.target.closest('.profile-tile');if(!t)return;
+  if(t.hasAttribute('data-add')){openProfileModal(null);return;}
+  var i=+t.getAttribute('data-idx');if(editing)openProfileModal(i);else enterProfile(i);
+});
+S('profileIconPicker').addEventListener('click',function(e){
+  var o=e.target.closest('.icon-opt');if(!o)return;
+  selectIcon(o.getAttribute('data-icon'));
+});
+S('navLinks').addEventListener('click',function(e){var l=e.target.closest('.nav-link');if(l)setNav(l.getAttribute('data-cat'));});
+S('hero').addEventListener('click',function(e){
+  var b=e.target.closest('.btn');if(!b)return;
+  if(b.hasAttribute('data-play'))openDetail(+b.getAttribute('data-play'));
+  else if(b.hasAttribute('data-mylist'))toggleMyList(+b.getAttribute('data-mylist'));
+  else if(b.hasAttribute('data-fav'))toggleFav(+b.getAttribute('data-fav'));
+});
+S('rows').addEventListener('click',function(e){var c=e.target.closest('.card');if(c)openDetail(+c.getAttribute('data-id'));});
+S('navProfile').addEventListener('click',function(){showScreen('Profiles');});
+
+S('btnAddProfile').addEventListener('click',function(){openProfileModal(null);});
+S('btnEditMode').addEventListener('click',toggleEdit);
+S('btnModalCancel').addEventListener('click',function(){S('modalProfile').classList.remove('active');editingIdx=null;});
+S('btnModalSave').addEventListener('click',saveProfileForm);
+S('btnModalDelete').addEventListener('click',confirmDelete);
+S('btnConfirmCancel').addEventListener('click',function(){S('modalConfirm').classList.remove('active');});
+S('btnConfirmYes').addEventListener('click',doDelete);
+S('btnDetailClose').addEventListener('click',function(){S('modalDetail').classList.remove('active');});
+S('btnDetailFav').addEventListener('click',function(){toggleFav(detailId);});
+S('btnDetailPlay').addEventListener('click',function(){toast('Reproduzindo: '+S('detailTitle').textContent);});
+
+renderProfiles();
+
+/* ---- Efeito sonoro do splash (sintetizado via Web Audio) ---- */
+var sndPlayed=false;
+function playSplashSound(){
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!window.__sndctx)window.__sndctx=new AC();
+    if(window.__sndctx.state==='suspended')window.__sndctx.resume();
+    var ctx=window.__sndctx;
+    // tom quente e suave (seno + leve harmônico) para um 'ta-dum' agradável
+    function tone(freq,at,dur,vol){
+      var t=ctx.currentTime+at;
+      var o=ctx.createOscillator();o.type='sine';o.frequency.setValueAtTime(freq,t);
+      var o2=ctx.createOscillator();o2.type='triangle';o2.frequency.setValueAtTime(freq*2,t);
+      var g=ctx.createGain();
+      g.gain.setValueAtTime(0.0001,t);
+      g.gain.exponentialRampToValueAtTime(vol,t+0.025);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      var g2=ctx.createGain();g2.gain.value=0.22;
+      o.connect(g);o2.connect(g2);g2.connect(g);g.connect(ctx.destination);
+      o.start(t);o2.start(t);o.stop(t+dur+0.03);o2.stop(t+dur+0.03);
+    }
+    // 'ta-dum' macio: nota quente + nota mais grave e ressonante
+    tone(196.0,0.12,0.50,0.28);   // 'ta' (A3)
+    tone(130.8,0.48,0.95,0.34);   // 'dum' (C3, mais grave)
+  }catch(e){}
+}
+function trySplashSound(){
+  if(sndPlayed)return;
+  playSplashSound();sndPlayed=true;
+}
+// desbloqueia o áudio (autoplay) no primeiro toque, sem tocar antes do pico
+document.addEventListener('keydown',function(){
+  try{if(window.__sndctx&&window.__sndctx.state==='suspended')window.__sndctx.resume();}catch(e){}
+},{once:true});
+// toca o som no pico do logo (~1.15s) e depois some
+setTimeout(function(){trySplashSound();},1000);
+
+/* Splash: exibe logo e some ao fim da animação */
+setTimeout(function(){
+  var sp=S('splash');sp.classList.add('hide');
+  setTimeout(function(){sp.style.display='none';},420);
+},1700);
+
+/* ============ AUTO-ATUALIZAÇÃO ============ */
+function checkUpdate(){
+  if(!REMOTE_BASE)return;
+  var base=REMOTE_BASE.replace(/\/+$/,'');
+  var x=new XMLHttpRequest();
+  x.open('GET',base+'/version.json?t='+Date.now(),true);
+  x.timeout=7000;
+  x.onload=function(){
+    try{
+      var v=JSON.parse(x.responseText);
+      if(v.version&&String(v.version)!==APP_VERSION){
+        toast('Atualização v'+v.version+' disponível!');
+        setTimeout(function(){
+          if(location.protocol==='http:'||location.protocol==='https:'){
+            location.reload();
+          }
+        },2800);
+      }else{
+        console.log('[CineMax] Versão atual já é a mais recente (v'+APP_VERSION+').');
+      }
+    }catch(e){console.log('[CineMax] version.json inválido',e);}
+  };
+  x.onerror=function(){console.log('[CineMax] Sem conexão com a base remota.');};
+  x.send();
+}
+/* verificação: no início e de hora em hora */
+setTimeout(checkUpdate,2400);
+setInterval(checkUpdate,3600000);
+</script>
+</body>
+</html>
