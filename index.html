@@ -11,8 +11,8 @@
   #stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;will-change:transform;background:radial-gradient(1200px 700px at 50% -10%,#1a1d26 0%,#0b0d12 70%);overflow:hidden;}
   .screen{position:absolute;inset:0;display:none;}
   .screen.active{display:block;}
-  .focusable{outline:none;transition:transform .1s ease,border-color .1s;}
-  .focusable:focus{border-color:var(--orange)!important;transform:scale(1.04);box-shadow:0 0 0 3px rgba(139,92,246,.45);}
+  .focusable{outline:none;transition:border-color .05s;backface-visibility:hidden;}
+  .focusable:focus{border-color:var(--orange)!important;outline:2px solid var(--orange);outline-offset:1px;transform:none;box-shadow:none;}
   .logo-box{width:52px;height:52px;border-radius:13px;background:linear-gradient(135deg,#a78bfa,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;box-shadow:0 6px 18px rgba(139,92,246,.45);}
   .brand-text{font-size:34px;font-weight:800;letter-spacing:.5px;color:#fff;}
   .brand-text span{color:var(--orange);}
@@ -103,7 +103,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.78</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.79</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -144,7 +144,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.78</div>
+    <div id="versionTag">v2.79</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -202,7 +202,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.78';
+var APP_VERSION='2.79';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
@@ -270,7 +270,7 @@ var rowsDef=[
 function S(id){return document.getElementById(id);}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function toast(m){var t=S('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2200);}
-function showScreen(n){document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});S('screen'+n).classList.add('active');}
+function showScreen(n){document.querySelectorAll('.screen').forEach(function(x){x.classList.remove('active');});S('screen'+n).classList.add('active');_fcInvalidate();}
 
 /* ============ state ============ */
 var profiles=[];try{profiles=JSON.parse(localStorage.getItem('cinemax_profiles')||'[]');}catch(e){profiles=[];}
@@ -279,7 +279,7 @@ var current=null,activeCat='home',editing=false,editingIdx=null,selIcon=null;
 
 /* ============ Profile screen ============ */
 function renderProfiles(){
-  var grid=S('profileGrid');grid.innerHTML='';
+  var grid=S('profileGrid');grid.innerHTML='';_fcInvalidate();
   profiles.forEach(function(p,i){
     var t=document.createElement('div');
     t.className='profile-tile focusable';t.tabIndex=0;t.setAttribute('data-idx',i);
@@ -304,6 +304,7 @@ function openProfileModal(idx){
   S('btnModalDelete').style.display=idx==null?'none':'block';
   renderIcons();
   S('modalProfile').classList.add('active');
+  _fcInvalidate();
   S('profileNameInput').focus();
 }
 function renderIcons(){
@@ -389,6 +390,7 @@ function renderRows(){
   });
   w.innerHTML='';
   w.appendChild(frag);
+  _fcInvalidate();
 }
 function setNav(cat){activeCat=cat;document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-cat')===cat);});renderRows();}
 var detailId=null;
@@ -396,7 +398,7 @@ function openDetail(id){
   var it=catalog[id];if(!it)return;
   detailId=id;
   S('detailTitle').textContent=it.t;S('detailMeta').textContent=it.meta;S('detailDesc').textContent=it.desc;
-  S('detailPoster').src=it.img;S('modalDetail').classList.add('active');S('btnDetailPlay').focus();
+  S('detailPoster').src=it.img;S('modalDetail').classList.add('active');_fcInvalidate();S('btnDetailPlay').focus();
 }
 function toggleMyList(id){
   if(!current)return;
@@ -423,14 +425,15 @@ function getFocusables(screen){
 }
 /* cache de posições do foco (evita getBoundingClientRect em toda tecla) */
 var _fc={t:0,box:null,items:[],rc:[]};
+function _fcInvalidate(){_fc.t=0;_fc.box=null;}
 function _fcSync(box){
   var now=Date.now();
-  if(_fc.box===box&&now-_fc.t<250)return;
+  if(_fc.box===box&&now-_fc.t<3000)return;
   _fc.box=box;_fc.t=now;
   _fc.items=getFocusables(box);
   _fc.rc=_fc.items.map(function(e){var r=e.getBoundingClientRect();return {l:r.left,t:r.top,w:r.width,h:r.height};});
 }
-document.addEventListener('scroll',function(){_fc.t=0;},{capture:true,passive:true});
+document.addEventListener('scroll',_fcInvalidate,{capture:true,passive:true});
 function moveFocus(dir){
   var scr=document.querySelector('.screen.active');
   var modal=document.querySelector('.modal-layer.active');
@@ -476,12 +479,12 @@ function activate(elm,box){
   }
   if(elm.id==='btnAddProfile')openProfileModal(null);
   else if(elm.id==='btnEditMode')toggleEdit();
-  else if(elm.id==='btnModalCancel'){S('modalProfile').classList.remove('active');editingIdx=null;}
+  else if(elm.id==='btnModalCancel'){S('modalProfile').classList.remove('active');editingIdx=null;_fcInvalidate();}
   else if(elm.id==='btnModalSave')saveProfileForm();
   else if(elm.id==='btnModalDelete')confirmDelete();
   else if(elm.id==='btnConfirmCancel')S('modalConfirm').classList.remove('active');
   else if(elm.id==='btnConfirmYes')doDelete();
-  else if(elm.id==='btnDetailClose')S('modalDetail').classList.remove('active');
+  else if(elm.id==='btnDetailClose'){S('modalDetail').classList.remove('active');_fcInvalidate();}
   else if(elm.id==='btnDetailFav')toggleFav(detailId);
   else if(elm.id==='btnDetailPlay')toast('Reproduzindo: '+S('detailTitle').textContent);
 }
@@ -491,7 +494,7 @@ document.addEventListener('keydown',function(e){
   var modal=document.querySelector('.modal-layer.active');
   var box=modal||scr;
   if(e.key==='Escape'){
-    if(modal)modal.classList.remove('active');
+    if(modal){modal.classList.remove('active');_fcInvalidate();}
     else if(scr.id==='screenHome')showScreen('Profiles');
     return;
   }
@@ -524,12 +527,12 @@ S('navProfile').addEventListener('click',function(){showScreen('Profiles');});
 
 S('btnAddProfile').addEventListener('click',function(){openProfileModal(null);});
 S('btnEditMode').addEventListener('click',toggleEdit);
-S('btnModalCancel').addEventListener('click',function(){S('modalProfile').classList.remove('active');editingIdx=null;});
+S('btnModalCancel').addEventListener('click',function(){S('modalProfile').classList.remove('active');editingIdx=null;_fcInvalidate();});
 S('btnModalSave').addEventListener('click',saveProfileForm);
 S('btnModalDelete').addEventListener('click',confirmDelete);
 S('btnConfirmCancel').addEventListener('click',function(){S('modalConfirm').classList.remove('active');});
 S('btnConfirmYes').addEventListener('click',doDelete);
-S('btnDetailClose').addEventListener('click',function(){S('modalDetail').classList.remove('active');});
+S('btnDetailClose').addEventListener('click',function(){S('modalDetail').classList.remove('active');_fcInvalidate();});
 S('btnDetailFav').addEventListener('click',function(){toggleFav(detailId);});
 S('btnDetailPlay').addEventListener('click',function(){toast('Reproduzindo: '+S('detailTitle').textContent);});
 
