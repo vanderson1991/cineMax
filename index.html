@@ -70,6 +70,7 @@
   .card img{width:100%;aspect-ratio:2/3;object-fit:cover;object-position:center;display:block;background:#111;}
   .card-title{position:absolute;left:0;right:0;bottom:0;padding:30px 10px 8px;background:linear-gradient(0deg,rgba(0,0,0,.95),transparent);font-size:16px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.95);}
   .play-badge{position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.95);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;z-index:2;}
+  .empty-hint{text-align:center;padding:70px 0;color:#9aa0ad;font-size:23px;}
   .modal-layer{position:absolute;inset:0;z-index:80;display:none;background:rgba(0,0,0,.82);}
   .modal-layer.active{display:flex;align-items:center;justify-content:center;}
   .modal{width:660px;background:#16181f;border:1px solid var(--line);border-radius:18px;padding:32px;box-shadow:0 30px 70px rgba(0,0,0,.7);}
@@ -104,7 +105,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.84</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.85</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -145,7 +146,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.84</div>
+    <div id="versionTag">v2.85</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -203,7 +204,7 @@
    Quando preenchida, o app avisa sozinho quando houver versÃ£o nova.
    Manter vazio = modo offline (sÃ³ dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.84';
+var APP_VERSION='2.85';
 
 /* ============ ESCALA AUTOMÃTICA (qualquer resoluÃ§Ã£o da TV) ============ */
 var stage=document.getElementById('stage');
@@ -363,27 +364,34 @@ function renderHome(){
     S('navProfileName').textContent=current.name;
     S('navProfileAvatar').style.backgroundImage="url('"+current.icon+"')";
   }
-  var it=catalog[0];
+  var it=null,i;
+  for(i=0;i<catalog.length;i++){if(LINKS[catalog[i].id]){it=catalog[i];break;}}
   var h=S('hero');
-  h.innerHTML='<div class="hero-bg" style="background-image:url(\''+it.img+'\')"></div>'+
-    '<div class="hero-shade"></div>'+
-    '<div class="hero-content">'+
-      '<div class="hero-title">'+esc(it.t)+'</div>'+
-      '<div class="hero-meta">'+esc(it.meta)+'</div>'+
-      '<div class="hero-actions">'+
-        '<button class="btn primary focusable" data-play="'+it.id+'" tabindex="0">â–¶ Assistir</button>'+
-        '<button class="btn ghost focusable" data-mylist="'+it.id+'" tabindex="0">ï¼‹ Minha lista</button>'+
-        '<button class="btn ghost focusable" data-fav="'+it.id+'" tabindex="0">â˜… Favorito</button>'+
-      '</div>'+
-    '</div>';
+  if(it){
+    h.style.display='';
+    h.innerHTML='<div class="hero-bg" style="background-image:url(\''+it.img+'\')"></div>'+
+      '<div class="hero-shade"></div>'+
+      '<div class="hero-content">'+
+        '<div class="hero-title">'+esc(it.t)+'</div>'+
+        '<div class="hero-meta">'+esc(it.meta)+'</div>'+
+        '<div class="hero-actions">'+
+          '<button class="btn primary focusable" data-play="'+it.id+'" tabindex="0">â–¶ Assistir</button>'+
+          '<button class="btn ghost focusable" data-mylist="'+it.id+'" tabindex="0">ï¼‹ Minha lista</button>'+
+          '<button class="btn ghost focusable" data-fav="'+it.id+'" tabindex="0">â˜… Favorito</button>'+
+        '</div>'+
+      '</div>';
+  }else{
+    h.style.display='none';
+  }
   renderRows();
 }
 function currentRows(){
-  if(activeCat==='home')return rowsDef;
-  if(activeCat==='minha'){var l=current?current.list||[]:[];return [{title:'Minha lista',items:l}];}
-  if(activeCat==='favoritos'){var l=current?current.favs||[]:[];return [{title:'Favoritos',items:l}];}
+  if(activeCat==='home')return rowsDef.map(function(r){return {title:r.title,items:r.items.filter(function(id){return LINKS[id];})};}).filter(function(r){return r.items.length;});
+  if(activeCat==='minha'){var l=(current?current.list||[]:[]).filter(function(id){return LINKS[id];});return [{title:'Minha lista',items:l}];}
+  if(activeCat==='favoritos'){var l=(current?current.favs||[]:[]).filter(function(id){return LINKS[id];});return [{title:'Favoritos',items:l}];}
   var c=activeCat==='filmes'?'Filmes':'series';
-  return [{title:activeCat.toUpperCase(),items:catalog.filter(function(x){return x.cat===c;}).map(function(x){return x.id;})}];
+  var ids=catalog.filter(function(x){return x.cat===c&&LINKS[x.id];}).map(function(x){return x.id;});
+  return [{title:activeCat.toUpperCase(),items:ids}];
 }
 function renderRows(){
   var w=S('rows');
@@ -401,8 +409,14 @@ function renderRows(){
     });
     frag.appendChild(row);
   });
-  w.innerHTML='';
-  w.appendChild(frag);
+  if(!frag.childNodes.length){
+    var d=document.createElement('div');d.className='empty-hint';
+    d.textContent='Nenhum filme com link ainda. Adicione vÃ­deos para aparecerem aqui.';
+    w.innerHTML='';w.appendChild(d);
+  }else{
+    w.innerHTML='';
+    w.appendChild(frag);
+  }
   _fcInvalidate();
 }
 function setNav(cat){activeCat=cat;document.querySelectorAll('.nav-link').forEach(function(l){l.classList.toggle('active',l.getAttribute('data-cat')===cat);});renderRows();}
