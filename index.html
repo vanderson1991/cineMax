@@ -94,9 +94,10 @@
   .detail-title{font-size:36px;line-height:1.15;margin-bottom:8px;}
   .detail-meta{font-size:18px;color:var(--sub);margin-bottom:14px;}
   .detail-desc{font-size:17px;color:#cfd3dc;line-height:1.55;margin-bottom:20px;max-height:235px;overflow-y:auto;}
-  .player-box{width:1060px;max-width:94vw;display:flex;flex-direction:column;align-items:flex-end;}
-  .player-row{display:flex;gap:16px;align-items:center;margin-top:20px;width:100%;justify-content:flex-end;}
-  .player-frame{width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;overflow:hidden;}
+  .player-box{position:absolute;inset:0;background:#000;}
+  .player-row{position:absolute;top:20px;right:24px;z-index:5;display:flex;gap:14px;align-items:center;}
+  .player-row .btn{padding:12px 22px;font-size:18px;background:rgba(13,15,18,.72);box-shadow:0 6px 20px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,.18);}
+  .player-frame{position:absolute;inset:0;background:#000;}
   .player-frame iframe,.player-frame video{width:100%;height:100%;border:0;background:#000;}
 </style>
 </head>
@@ -110,7 +111,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.88</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.89</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -151,7 +152,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.88</div>
+    <div id="versionTag">v2.89</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -224,7 +225,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.88';
+var APP_VERSION='2.89';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
