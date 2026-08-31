@@ -87,17 +87,14 @@
   .toast{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:13px 26px;border-radius:30px;font-size:18px;font-weight:600;z-index:120;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);}
   .toast.show{opacity:1;}
   #versionTag{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:17px;font-weight:800;color:#ffd54a;z-index:60;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;background:rgba(0,0,0,.55);padding:6px 16px;border-radius:9px;}
-  #modalDetail{background:rgba(0,0,0,.9);}
-  .detail-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px 40px;}
-  .detail-flex{display:flex;gap:60px;align-items:center;max-width:100%;}
-  .detail-media{width:440px;height:660px;flex:0 0 auto;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 18px 50px rgba(0,0,0,.6);}
+  .detail-flex{display:flex;gap:44px;align-items:flex-start;width:100%;}
+  .detail-media{width:390px;height:585px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.55);}
   .detail-media img{width:100%;height:100%;object-fit:contain;display:block;background:#0d0f14;}
-  .detail-info{flex:1;min-width:0;max-width:660px;}
-  .detail-title{font-size:50px;line-height:1.12;margin-bottom:14px;}
-  .detail-meta{font-size:23px;color:var(--sub);margin-bottom:18px;}
-  .detail-desc{font-size:21px;color:#cfd3dc;line-height:1.55;max-height:340px;overflow-y:auto;}
-  .detail-actions{position:absolute;top:24px;right:34px;display:flex;gap:16px;z-index:5;}
-  .player-box{position:absolute;inset:0;background:#000;}
+  .detail-info{flex:1;min-width:0;}
+  .detail-title{font-size:44px;line-height:1.15;margin-bottom:10px;}
+  .detail-meta{font-size:21px;color:var(--sub);margin-bottom:16px;}
+  .detail-desc{font-size:20px;color:#cfd3dc;line-height:1.55;margin-bottom:18px;max-height:380px;overflow-y:auto;}
+  .player-box{position:absolute;inset:0;background:#000;transform-origin:center center;}
   .player-row{position:absolute;top:20px;right:24px;z-index:5;display:flex;gap:14px;align-items:center;}
   .player-row .btn{padding:12px 22px;font-size:18px;background:rgba(13,15,18,.72);box-shadow:0 6px 20px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,.18);}
   .player-frame{position:absolute;inset:0;background:#000;}
@@ -114,7 +111,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.91</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.92</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -155,7 +152,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.91</div>
+    <div id="versionTag">v2.92</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -189,7 +186,7 @@
 
   <!-- DETAIL -->
   <div class="modal-layer" id="modalDetail">
-    <div class="detail-wrap">
+    <div class="modal" style="width:1240px;padding:20px 34px;">
       <div class="detail-flex">
         <div class="detail-media"><img id="detailPoster" alt=""></div>
         <div class="detail-info">
@@ -198,8 +195,9 @@
           <div class="detail-desc" id="detailDesc"></div>
         </div>
       </div>
-      <div class="detail-actions">
+      <div class="modal-actions">
         <button class="btn ghost focusable" id="btnDetailFav" tabindex="0">★ Favorito</button>
+        <div class="spacer"></div>
         <button class="btn ghost focusable" id="btnDetailClose" tabindex="0">Fechar</button>
         <button class="btn primary focusable" id="btnDetailPlay" tabindex="0">▶ Assistir</button>
       </div>
@@ -227,7 +225,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.91';
+var APP_VERSION='2.92';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
@@ -236,7 +234,9 @@ function fit(){
   var h=window.innerHeight||document.documentElement.clientHeight;
   if((!w||w<=10)&&window.screen){w=screen.width;}if((!h||h<=10)&&window.screen){h=screen.height;}
   var s=Math.min(w/1280,h/720)*0.56;
+  window._fitScale=s;
   stage.style.transform='translate(-50%,-50%) scale('+s+')';
+  if(S('playerLayer').classList.contains('active'))_applyPlayerScale();
 }
 window.addEventListener('resize',fit);fit();
 setTimeout(fit,300);window.addEventListener('load',fit);
@@ -463,6 +463,12 @@ function openPlayer(html,url){
   document.querySelectorAll('.modal-layer').forEach(function(m){m.classList.remove('active');});
   S('playerFrame').innerHTML=html;
   S('playerLayer').classList.add('active');_fcInvalidate();S('btnPlayerExt').focus();
+  _applyPlayerScale();
+}
+function _applyPlayerScale(){
+  var k=window._fitScale||0.56;
+  S('playerLayer').style.transform='';
+  S('playerLayer').style.transform='scale('+(1/k)+')';
 }
 function openPlayerExternal(){
   if(!_playerUrl)return;
@@ -470,6 +476,7 @@ function openPlayerExternal(){
   else{window.open(_playerUrl,'_blank');}
 }
 function closePlayer(){
+  S('playerLayer').style.transform='';
   S('playerFrame').innerHTML='';
   S('playerLayer').classList.remove('active');_fcInvalidate();
   if(_playerFromDetail){S('modalDetail').classList.add('active');S('btnDetailPlay').focus();}
