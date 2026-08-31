@@ -94,11 +94,12 @@
   .detail-title{font-size:44px;line-height:1.15;margin-bottom:10px;}
   .detail-meta{font-size:21px;color:var(--sub);margin-bottom:16px;}
   .detail-desc{font-size:20px;color:#cfd3dc;line-height:1.55;margin-bottom:18px;max-height:380px;overflow-y:auto;}
-  .player-box{position:absolute;inset:0;background:#000;transform-origin:center center;}
+  .player-box{position:absolute;inset:0;background:#000;}
   .player-row{position:absolute;top:20px;right:24px;z-index:5;display:flex;gap:14px;align-items:center;}
   .player-row .btn{padding:12px 22px;font-size:18px;background:rgba(13,15,18,.72);box-shadow:0 6px 20px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,.18);}
   .player-frame{position:absolute;inset:0;background:#000;}
   .player-frame iframe,.player-frame video{width:100%;height:100%;border:0;background:#000;}
+  #playerLayer{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:95;}
 </style>
 </head>
 <body>
@@ -111,7 +112,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.92</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.93</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -152,7 +153,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.92</div>
+    <div id="versionTag">v2.93</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -204,7 +205,10 @@
     </div>
   </div>
 
-  <!-- PLAYER -->
+  <div class="toast" id="toast"></div>
+</div>
+
+  <!-- PLAYER (fora da area escalada -> ocupa a tela toda da TV) -->
   <div class="modal-layer" id="playerLayer" style="background:#000;">
     <div class="player-box">
       <div class="player-frame" id="playerFrame"></div>
@@ -215,9 +219,6 @@
     </div>
   </div>
 
-  <div class="toast" id="toast"></div>
-</div>
-
 <script>
 "use strict";
 /* ============ CONFIGURAÇÃO / VERSÃO ============ */
@@ -225,7 +226,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.92';
+var APP_VERSION='2.93';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
@@ -234,9 +235,7 @@ function fit(){
   var h=window.innerHeight||document.documentElement.clientHeight;
   if((!w||w<=10)&&window.screen){w=screen.width;}if((!h||h<=10)&&window.screen){h=screen.height;}
   var s=Math.min(w/1280,h/720)*0.56;
-  window._fitScale=s;
   stage.style.transform='translate(-50%,-50%) scale('+s+')';
-  if(S('playerLayer').classList.contains('active'))_applyPlayerScale();
 }
 window.addEventListener('resize',fit);fit();
 setTimeout(fit,300);window.addEventListener('load',fit);
@@ -463,12 +462,6 @@ function openPlayer(html,url){
   document.querySelectorAll('.modal-layer').forEach(function(m){m.classList.remove('active');});
   S('playerFrame').innerHTML=html;
   S('playerLayer').classList.add('active');_fcInvalidate();S('btnPlayerExt').focus();
-  _applyPlayerScale();
-}
-function _applyPlayerScale(){
-  var k=window._fitScale||0.56;
-  S('playerLayer').style.transform='';
-  S('playerLayer').style.transform='scale('+(1/k)+')';
 }
 function openPlayerExternal(){
   if(!_playerUrl)return;
@@ -476,7 +469,6 @@ function openPlayerExternal(){
   else{window.open(_playerUrl,'_blank');}
 }
 function closePlayer(){
-  S('playerLayer').style.transform='';
   S('playerFrame').innerHTML='';
   S('playerLayer').classList.remove('active');_fcInvalidate();
   if(_playerFromDetail){S('modalDetail').classList.add('active');S('btnDetailPlay').focus();}
