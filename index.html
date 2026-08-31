@@ -87,13 +87,13 @@
   .toast{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:13px 26px;border-radius:30px;font-size:18px;font-weight:600;z-index:120;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);}
   .toast.show{opacity:1;}
   #versionTag{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);font-size:17px;font-weight:800;color:#ffd54a;z-index:60;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;background:rgba(0,0,0,.55);padding:6px 16px;border-radius:9px;}
-  .detail-flex{display:flex;gap:28px;align-items:flex-start;}
-  .detail-media{width:360px;height:540px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.55);}
+  .detail-flex{display:flex;gap:44px;align-items:flex-start;width:100%;}
+  .detail-media{width:390px;height:585px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 14px 40px rgba(0,0,0,.55);}
   .detail-media img{width:100%;height:100%;object-fit:contain;display:block;background:#0d0f14;}
   .detail-info{flex:1;min-width:0;}
-  .detail-title{font-size:36px;line-height:1.15;margin-bottom:8px;}
-  .detail-meta{font-size:18px;color:var(--sub);margin-bottom:14px;}
-  .detail-desc{font-size:17px;color:#cfd3dc;line-height:1.55;margin-bottom:20px;max-height:235px;overflow-y:auto;}
+  .detail-title{font-size:44px;line-height:1.15;margin-bottom:10px;}
+  .detail-meta{font-size:21px;color:var(--sub);margin-bottom:16px;}
+  .detail-desc{font-size:20px;color:#cfd3dc;line-height:1.55;margin-bottom:18px;max-height:380px;overflow-y:auto;}
   .player-box{position:absolute;inset:0;background:#000;}
   .player-row{position:absolute;top:20px;right:24px;z-index:5;display:flex;gap:14px;align-items:center;}
   .player-row .btn{padding:12px 22px;font-size:18px;background:rgba(13,15,18,.72);box-shadow:0 6px 20px rgba(0,0,0,.5);border:3px solid rgba(255,255,255,.18);}
@@ -111,7 +111,7 @@
     </div>
     <div class="splash-brand">Cine<span>CLT</span></div>
     <div class="splash-tag">Filmes Free</div>
-    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.89</div>
+    <div class="splash-ver" style="margin-top:26px;font-size:20px;font-weight:800;color:#ffd54a;letter-spacing:2px;opacity:0;animation:fadeUp .6s .6s ease forwards;">v2.90</div>
     <div class="splash-bar"><i></i></div>
   </div>
   <!-- PROFILES -->
@@ -152,7 +152,7 @@
     </div>
     <div class="hero" id="hero"></div>
     <div class="content-rows" id="rows"></div>
-    <div id="versionTag">v2.89</div>
+    <div id="versionTag">v2.90</div>
   </div>
 
   <!-- PROFILE MODAL -->
@@ -186,7 +186,7 @@
 
   <!-- DETAIL -->
   <div class="modal-layer" id="modalDetail">
-    <div class="modal" style="width:860px;">
+    <div class="modal" style="width:1240px;padding:20px 34px;">
       <div class="detail-flex">
         <div class="detail-media"><img id="detailPoster" alt=""></div>
         <div class="detail-info">
@@ -225,7 +225,7 @@
    Quando preenchida, o app avisa sozinho quando houver versão nova.
    Manter vazio = modo offline (só dentro do APK, aviso manual). */
 var REMOTE_BASE='https://vanderson1991.github.io/cineMax/';
-var APP_VERSION='2.89';
+var APP_VERSION='2.90';
 
 /* ============ ESCALA AUTOMÁTICA (qualquer resolução da TV) ============ */
 var stage=document.getElementById('stage');
