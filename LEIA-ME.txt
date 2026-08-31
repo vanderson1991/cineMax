@@ -1,5 +1,5 @@
 ====================================
-  CineCLT - ProjetinhoTv  (v2.87 FINAL)
+  CineCLT - ProjetinhoTv  (v2.88 FINAL)
 ====================================
 App de TV gratuito (HTML/JS) - tela base 1280x720
 que se ajusta a qualquer resolucao de Smart TV.
@@ -12,7 +12,7 @@ CONTEUDO:
   capas/        -> 23 posters de filmes (catalogo)
   avatars/      -> 67 avatares de perfil + 3 originais
   previews/     -> previas do visual
-  APK/          -> CineCLT-v2.87.apk p/ instalar na TV
+  APK/          -> CineCLT-v2.88.apk p/ instalar na TV
 
 ATUALIZACOES (app se atualiza sozinho):
   1. Hospede a pasta ProjetinhoTv num servidor/URL fixa (ex: GitHub Pages).
